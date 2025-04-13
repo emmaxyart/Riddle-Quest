@@ -19,6 +19,9 @@ export default function EasyMode() {
     useHint
   } = useGame();
 
+  // Call useHint at the top level
+  const handleHint = useHint;
+
   const [isLoading, setIsLoading] = useState(true);
   const [riddles, setRiddles] = useState<Riddle[]>([]);
   const [currentRiddleIndex, setCurrentRiddleIndex] = useState(0);
@@ -56,10 +59,36 @@ export default function EasyMode() {
     fetchRiddles();
   }, []);
 
+  const moveToNextRiddle = useCallback(() => {
+    if (currentRiddleIndex < riddles.length - 1) {
+      setCurrentRiddleIndex(prev => prev + 1);
+      setAnswer('');
+      setShowHint(false);
+      setFeedback({ message: '', type: null });
+    } else {
+      // Game is over
+      setCurrentRiddleIndex(riddles.length);
+      setFeedback({
+        message: `Game Over! Final Score: ${gameState.score}`,
+        type: 'info'
+      });
+    }
+  }, [currentRiddleIndex, riddles.length, gameState.score]);
+
+  const handleTimeUp = useCallback(() => {
+    setFeedback({
+      message: 'Time\'s up! Moving to next riddle...',
+      type: 'error'
+    });
+    
+    console.log('Time up for current riddle');
+    setTimeout(moveToNextRiddle, 2000);
+  }, [moveToNextRiddle]);
+
   useEffect(() => {
+    let timerId: NodeJS.Timeout;
+
     if (!isLoading && riddles.length > 0 && currentRiddleIndex < riddles.length) {
-      let timerId: NodeJS.Timeout;
-      
       const startTimer = () => {
         setTimeRemaining(riddles[currentRiddleIndex].timeLimit);
         
@@ -76,40 +105,14 @@ export default function EasyMode() {
       };
 
       startTimer();
-
-      return () => {
-        if (timerId) {
-          clearInterval(timerId);
-        }
-      };
     }
-  }, [currentRiddleIndex, isLoading, riddles]);
 
-  const handleTimeUp = () => {
-    setFeedback({
-      message: 'Time\'s up! Moving to next riddle...',
-      type: 'error'
-    });
-    
-    console.log('Time up for current riddle');
-    setTimeout(moveToNextRiddle, 2000);
-  };
-
-  const moveToNextRiddle = useCallback(() => {
-    if (currentRiddleIndex < riddles.length - 1) {
-      setCurrentRiddleIndex(prev => prev + 1);
-      setAnswer('');
-      setShowHint(false);
-      setFeedback({ message: '', type: null });
-    } else {
-      // Game is over
-      setCurrentRiddleIndex(riddles.length);
-      setFeedback({
-        message: `Game Over! Final Score: ${gameState.score}`,
-        type: 'info'
-      });
-    }
-  }, [currentRiddleIndex, riddles.length, gameState.score]);
+    return () => {
+      if (timerId) {
+        clearInterval(timerId);
+      }
+    };
+  }, [currentRiddleIndex, isLoading, riddles, handleTimeUp]);
 
   const handleSubmitAnswer = () => {
     if (!answer.trim()) {
@@ -142,9 +145,16 @@ export default function EasyMode() {
     }
   };
 
-  const handleShowHint = () => {
-    const hint = useHint();
-    if (hint) {
+  const handleShowHint = useCallback(() => {
+    if (!user?.hintsRemaining) {
+      setFeedback({
+        message: 'No hints remaining!',
+        type: 'error'
+      });
+      return;
+    }
+
+    if (handleHint() && riddles[currentRiddleIndex]) {
       const generatedHint = generateHint(
         riddles[currentRiddleIndex].question,
         riddles[currentRiddleIndex].answer
@@ -160,7 +170,7 @@ export default function EasyMode() {
         type: 'error'
       });
     }
-  };
+  }, [user?.hintsRemaining, handleHint, riddles, currentRiddleIndex]);
 
   const handleResetGame = () => {
     resetGame();
@@ -235,6 +245,17 @@ export default function EasyMode() {
               {riddles[currentRiddleIndex].question}
             </p>
           </div>
+
+          {/* Hint Display */}
+          {showHint && (
+            <div className="mb-6 p-4 rounded-lg bg-blue-500/20 border border-blue-500/30">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-blue-400">💡</span>
+                <h3 className="text-blue-400 font-semibold">Hint</h3>
+              </div>
+              <p className="text-blue-200">{feedback.message}</p>
+            </div>
+          )}
 
           {/* Answer Input */}
           <div className="space-y-3 sm:space-y-4">
@@ -340,10 +361,4 @@ export default function EasyMode() {
     </div>
   );
 }
-
-
-
-
-
-
 

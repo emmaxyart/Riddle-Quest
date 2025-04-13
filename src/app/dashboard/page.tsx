@@ -1,7 +1,6 @@
 'use client';
 
 import { useGame } from '@/context/GameContext';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import BackButton from '@/components/BackButton';

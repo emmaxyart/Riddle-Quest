@@ -3,11 +3,15 @@ export interface Riddle {
   question: string;
   answer: string;
   difficulty: 'easy' | 'medium' | 'hard';
+  points: number;
+  hint: string;
+  timeLimit: number;
 }
 
 export interface User {
   username: string;
   highScore: number;
+  hintsRemaining: number;
 }
 
 export interface GameState {
@@ -15,4 +19,5 @@ export interface GameState {
   score: number;
   isPlaying: boolean;
   gameMode: 'easy' | 'medium' | 'hard';
+  multiplier: number;
 }

@@ -71,8 +71,8 @@ export default function Home() {
               </p>
               
               <p>
-                In this game, you'll face mind-twisting riddles that will challenge your logic, creativity, and wit.
-                From simple brain teasers to tricky puzzles — there's something for everyone!
+                In this game, you will face mind-twisting riddles that will challenge your logic, creativity, and wit.
+                From simple brain teasers to tricky puzzles — there is something for everyone!
               </p>
               
               <div className="bg-foreground/10 rounded-lg p-4">
@@ -94,7 +94,7 @@ export default function Home() {
                 onClick={() => setShowInstructions(false)}
                 className="w-full mt-6 px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
               >
-                👉 Let's Begin!
+                👉 Click to Begin!
               </button>
             </div>
           </div>

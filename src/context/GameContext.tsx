@@ -23,7 +23,8 @@ const DEFAULT_GAME_STATE: GameState = {
   currentRiddle: 0,
   score: 0,
   isPlaying: false,
-  multiplier: 0
+  multiplier: 0,
+  gameMode: 'easy'  // Adding default game mode
 };
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
