@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { setMusicVolume } from '@/utils/music';
+import { useGame } from '@/context/GameContext';
 
 export default function VolumeControl() {
+  const { isMusicPlaying } = useGame();
   const [volume, setVolume] = useState(30); // 0-100 range
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -9,6 +11,8 @@ export default function VolumeControl() {
     setVolume(newVolume);
     setMusicVolume(newVolume / 100); // Convert to 0-1 range
   };
+
+  if (!isMusicPlaying) return null;
 
   return (
     <div className="flex items-center gap-2">

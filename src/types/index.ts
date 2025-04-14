@@ -13,7 +13,14 @@ export interface User {
   highScore: number;
   hintsRemaining: number;
   avatar?: string;
-  lastLoginDate?: string;
+  lastLoginDate: string;
+  streak: number;
+  totalGames: number;
+  totalCorrectAnswers: number;
+  fastestAnswer: number;
+  gamesWithoutHints: number;
+  perfectGames: number;
+  lastPlayedDate?: string;
 }
 
 export interface GameState {

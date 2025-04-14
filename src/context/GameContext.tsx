@@ -13,9 +13,11 @@ interface GameContextType {
   toggleMusic: () => void;
   resetGame: () => void;
   resetHighScore: () => void;
-  updateScore: (points: number, timeRemaining: number) => void;
+  updateScore: (points: number, timeRemaining: number, answerTime: number) => void;
   useHint: () => boolean;
   updateAvatar: (avatarData: string) => Promise<void>;
+  updateUsername: (newUsername: string) => void;
+  completeGame: (usedHints: boolean) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -58,22 +60,54 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       if (!username.trim()) return false;
 
       const existingUser = localStorage.getItem(`user_${username}`);
-      const newUser = existingUser 
-        ? JSON.parse(existingUser)
-        : {
-            username,
-            highScore: 0,
-            lastLoginDate: new Date().toISOString(),
-            hintsRemaining: 15  // Changed from 3 to 15
-          };
+      const currentDate = new Date().toISOString();
+      
+      let newUser;
+      if (existingUser) {
+        const parsedUser = JSON.parse(existingUser);
+        // Calculate streak
+        const lastLoginDate = new Date(parsedUser.lastLoginDate);
+        const daysSinceLastLogin = Math.floor(
+          (new Date().getTime() - lastLoginDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        
+        newUser = {
+          ...parsedUser,
+          lastLoginDate: currentDate,
+          streak: daysSinceLastLogin === 1 ? parsedUser.streak + 1 : daysSinceLastLogin === 0 ? parsedUser.streak : 0,
+        };
+      } else {
+        newUser = {
+          username,
+          highScore: 0,
+          hintsRemaining: 15,
+          lastLoginDate: currentDate,
+          streak: 0,
+          totalGames: 0,
+          totalCorrectAnswers: 0,
+          fastestAnswer: Infinity,
+          gamesWithoutHints: 0,
+          lastPlayedDate: currentDate,
+          avatar: '',
+        };
+      }
 
       setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
-      localStorage.setItem(`user_${username}`, JSON.stringify(newUser));
+      saveUserToStorage(newUser);
       return true;
     } catch (error) {
       console.error('Error during login:', error);
       return false;
+    }
+  };
+
+  // Helper function to save user data to storage
+  const saveUserToStorage = (userData: User) => {
+    try {
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem(`user_${userData.username}`, JSON.stringify(userData));
+    } catch (error) {
+      console.error('Error saving user data:', error);
     }
   };
 
@@ -110,15 +144,15 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       isPlaying: true,
     });
 
-    // Reset user's hints if they exist
     if (user) {
       const updatedUser = {
         ...user,
-        hintsRemaining: 15  // Changed from 3 to 15
+        hintsRemaining: 15,
+        totalGames: user.totalGames + 1,
+        lastPlayedDate: new Date().toISOString(),
       };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      localStorage.setItem(`user_${user.username}`, JSON.stringify(updatedUser));
+      saveUserToStorage(updatedUser);
     }
   };
 
@@ -127,15 +161,14 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       if (user) {
         const updatedUser = { ...user, highScore: 0 };
         setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        localStorage.setItem(`user_${user.username}`, JSON.stringify(updatedUser));
+        saveUserToStorage(updatedUser);
       }
     } catch (error) {
       console.error('Error resetting high score:', error);
     }
   };
 
-  const updateScore = (points: number, timeRemaining: number) => {
+  const updateScore = (points: number, timeRemaining: number, answerTime: number) => {
     try {
       if (!user) return;
 
@@ -143,14 +176,16 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       const totalPoints = points + timeBonus;
       const newScore = gameState.score + totalPoints;
 
-      setGameState(prev => ({ ...prev, score: newScore }));
+      const updatedUser = {
+        ...user,
+        totalCorrectAnswers: user.totalCorrectAnswers + 1,
+        fastestAnswer: Math.min(user.fastestAnswer, answerTime),
+        highScore: newScore > user.highScore ? newScore : user.highScore
+      };
 
-      if (newScore > user.highScore) {
-        const updatedUser = { ...user, highScore: newScore };
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        localStorage.setItem(`user_${user.username}`, JSON.stringify(updatedUser));
-      }
+      setGameState(prev => ({ ...prev, score: newScore }));
+      setUser(updatedUser);
+      saveUserToStorage(updatedUser);
     } catch (error) {
       console.error('Error updating score:', error);
     }
@@ -161,12 +196,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     
     const updatedUser = {
       ...user,
-      hintsRemaining: user.hintsRemaining - 1
+      hintsRemaining: user.hintsRemaining - 1,
+      gamesWithoutHints: 0, // Reset when a hint is used
     };
     
     setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    localStorage.setItem(`user_${user.username}`, JSON.stringify(updatedUser));
+    saveUserToStorage(updatedUser);
     
     return true;
   };
@@ -181,12 +216,44 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       };
 
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      localStorage.setItem(`user_${user.username}`, JSON.stringify(updatedUser));
+      saveUserToStorage(updatedUser);
     } catch (error) {
       console.error('Failed to update avatar:', error);
       throw new Error('Failed to update avatar');
     }
+  };
+
+  const updateUsername = (newUsername: string) => {
+    if (!user) return;
+    
+    try {
+      // Remove old username data
+      localStorage.removeItem(`user_${user.username}`);
+      
+      const updatedUser = { ...user, username: newUsername };
+      setUser(updatedUser);
+      saveUserToStorage(updatedUser);
+    } catch (error) {
+      console.error('Failed to update username:', error);
+      throw new Error('Failed to update username');
+    }
+  };
+
+  const completeGame = (usedHints: boolean) => {
+    if (!user) return;
+
+    const TOTAL_RIDDLES = 40;
+    const isPerfectGame = gameState.score === TOTAL_RIDDLES * 10; // Assuming 10 points per riddle
+    
+    const updatedUser = {
+      ...user,
+      gamesWithoutHints: usedHints ? 0 : user.gamesWithoutHints + 1,
+      perfectGames: isPerfectGame ? (user.perfectGames || 0) + 1 : (user.perfectGames || 0),
+      lastPlayedDate: new Date().toISOString(),
+    };
+
+    setUser(updatedUser);
+    saveUserToStorage(updatedUser);
   };
 
   return (
@@ -202,6 +269,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       updateScore,
       useHint,
       updateAvatar,
+      updateUsername,
+      completeGame,
     }}>
       {children}
     </GameContext.Provider>

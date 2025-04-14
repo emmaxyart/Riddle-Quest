@@ -16,7 +16,8 @@ export default function EasyMode() {
     resetGame,
     resetHighScore,
     updateScore,
-    useHint
+    useHint,
+    completeGame
   } = useGame();
 
   // Call useHint at the top level
@@ -32,6 +33,8 @@ export default function EasyMode() {
     message: string;
     type: 'success' | 'error' | 'info' | null;
   }>({ message: '', type: null });
+  const [startTime, setStartTime] = useState<number>(0);
+  const [usedHintsThisGame, setUsedHintsThisGame] = useState(false);
 
   const TOTAL_RIDDLES = 40;
 
@@ -125,10 +128,11 @@ export default function EasyMode() {
 
     const currentRiddle = riddles[currentRiddleIndex];
     const isCorrect = answer.toLowerCase().trim() === currentRiddle.answer.toLowerCase();
+    const answerTime = (Date.now() - startTime) / 1000; // Convert to seconds
 
     if (isCorrect) {
       playSound('success');
-      updateScore(currentRiddle.points, timeRemaining);
+      updateScore(currentRiddle.points, timeRemaining, answerTime);
      
       setFeedback({
         message: `Correct! +${currentRiddle.points} points`,
@@ -154,7 +158,8 @@ export default function EasyMode() {
       return;
     }
 
-    if (handleHint() && riddles[currentRiddleIndex]) {
+    if (handleHint()) {
+      setUsedHintsThisGame(true);
       const generatedHint = generateHint(
         riddles[currentRiddleIndex].question,
         riddles[currentRiddleIndex].answer
@@ -188,6 +193,16 @@ export default function EasyMode() {
       remaining: TOTAL_RIDDLES - (currentRiddleIndex + 1)
     };
   };
+
+  useEffect(() => {
+    if (currentRiddleIndex === riddles.length) {
+      completeGame(usedHintsThisGame);
+    }
+  }, [currentRiddleIndex, riddles.length, usedHintsThisGame, completeGame]);
+
+  useEffect(() => {
+    setStartTime(Date.now());
+  }, [currentRiddleIndex]);
 
   if (isLoading) {
     return <Loading />;
@@ -361,4 +376,6 @@ export default function EasyMode() {
     </div>
   );
 }
+
+// The completeGame function is now imported from the GameContext
 

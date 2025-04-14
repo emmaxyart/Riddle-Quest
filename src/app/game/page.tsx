@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
+import VolumeControl from '@/components/VolumeControl';
 
-export default function GameDifficultySelection() {
-  const { user } = useGame();
+export default function GameModePage() {
+  const { user, toggleMusic, isMusicPlaying } = useGame();
   const router = useRouter();
 
   useEffect(() => {
@@ -19,11 +20,24 @@ export default function GameDifficultySelection() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-purple-900/20 to-indigo-900/20 backdrop-blur-sm">
-      <BackButton />
-      <div className="w-full max-w-2xl backdrop-blur-md bg-foreground/10 rounded-xl sm:rounded-2xl border border-foreground/20 p-6 sm:p-8 shadow-2xl">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-center bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-          Select Difficulty
+    <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-purple-900/20 to-indigo-900/20">
+      <div className="flex justify-between items-center">
+        <BackButton />
+        <div className="flex items-center gap-4">
+          <button
+            onClick={toggleMusic}
+            className="p-2 rounded-full bg-foreground/10 hover:bg-foreground/20 transition-colors"
+            aria-label={isMusicPlaying ? 'Mute music' : 'Unmute music'}
+          >
+            {isMusicPlaying ? '🔊' : '🔈'}
+          </button>
+          <VolumeControl />
+        </div>
+      </div>
+      
+      <div className="max-w-2xl mx-auto mt-12">
+        <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          Choose Your Challenge
         </h1>
         
         <div className="grid grid-cols-1 gap-4">

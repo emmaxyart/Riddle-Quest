@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
 import type { Riddle } from '@/types';
 
+// Add proper export for Next.js Route Handler
+export const dynamic = 'force-dynamic'; // Ensure the route is dynamic
+export const runtime = 'edge'; // Optional: Use edge runtime for better performance
+
 export async function GET() {
+  const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || '4bf0965d0bmsh88dc19b57d192b3p12dc91jsn68a0d9b13f57';
+  
   const options = {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Key': '4bf0965d0bmsh88dc19b57d192b3p12dc91jsn68a0d9b13f57',
+      'X-RapidAPI-Key': RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'riddle-api.p.rapidapi.com'
     }
   };
@@ -18,7 +24,6 @@ export async function GET() {
     }
 
     const data = await response.json();
-    console.log('API Response:', data); // For debugging
 
     // Map the API response to your game's format
     const formattedRiddle: Riddle = {
