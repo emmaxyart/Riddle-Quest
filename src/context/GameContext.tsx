@@ -172,16 +172,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateAvatar = async (avatarData: string): Promise<void> => {
-    if (!user) return;
+    if (!user) throw new Error('No user logged in');
 
-    const updatedUser = {
-      ...user,
-      avatar: avatarData
-    };
+    try {
+      const updatedUser: User = {
+        ...user,
+        avatar: avatarData
+      };
 
-    setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    localStorage.setItem(`user_${user.username}`, JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem(`user_${user.username}`, JSON.stringify(updatedUser));
+    } catch (error) {
+      console.error('Failed to update avatar:', error);
+      throw new Error('Failed to update avatar');
+    }
   };
 
   return (

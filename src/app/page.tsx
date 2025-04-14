@@ -50,7 +50,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setShowMusicPrompt(false)}
-                className="px-6 py-3 rounded-lg bg-foreground/20 text-white font-semibold hover:bg-foreground/30 transition-colors"
+                className="px-6 py-3 mt-4 rounded-lg bg-foreground/20 text-white font-semibold hover:bg-foreground/30 transition-colors"
               >
                 No Thanks
               </button>

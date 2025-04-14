@@ -3,7 +3,13 @@
 import { useGame } from '@/context/GameContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
+import Avatar from '@/components/Avatar';
+
+interface FileInputEvent extends React.ChangeEvent<HTMLInputElement> {
+  target: HTMLInputElement & {
+    files: FileList;
+  };
+}
 
 export default function AvatarUpload() {
   const { user, updateAvatar } = useGame();
@@ -28,8 +34,8 @@ export default function AvatarUpload() {
     }
   }, [selectedFile]);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileSelect = (e: FileInputEvent) => {
+    const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
         setError('File size must be less than 5MB');
@@ -71,20 +77,11 @@ export default function AvatarUpload() {
         <h1 className="text-2xl font-bold text-center">Choose Your Avatar</h1>
         
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-purple-500 relative">
-            {preview ? (
-              <Image
-                src={preview}
-                alt="Avatar preview"
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-foreground/20 flex items-center justify-center">
-                <span className="text-4xl">👤</span>
-              </div>
-            )}
-          </div>
+          <Avatar 
+            src={preview}
+            alt="Avatar preview"
+            size="lg"
+          />
 
           <label className="w-full">
             <input
@@ -121,3 +118,4 @@ export default function AvatarUpload() {
     </div>
   );
 }
+

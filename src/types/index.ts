@@ -12,6 +12,8 @@ export interface User {
   username: string;
   highScore: number;
   hintsRemaining: number;
+  avatar?: string;
+  lastLoginDate?: string;
 }
 
 export interface GameState {
