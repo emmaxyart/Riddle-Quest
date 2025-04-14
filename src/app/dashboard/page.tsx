@@ -1,105 +1,139 @@
 'use client';
 
-import { useGame } from '@/context/GameContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import Avatar from '@/components/Avatar';
-import BackButton from '@/components/BackButton';
+import ErrorBoundary from '@/components/ErrorBoundary';
+
+interface User {
+  username: string;
+  highScore: number;
+  stats: {
+    totalGamesPlayed: number;
+  };
+  streak: {
+    current: number;
+    best: number;
+  };
+  achievements: {
+    [key: string]: boolean;
+  };
+}
+
+function useAuth() {
+  return {
+    user: null as User | null,
+    isLoading: false
+  };
+}
+
+type DifficultyButton = {
+  mode: 'easy' | 'medium' | 'hard';
+  gradient: string;
+  hoverGradient: string;
+  label: string;
+};
+
+type Achievement = {
+  id: 'perfect10' | 'streak3' | 'speedster' | 'riddleMaster';
+  icon: string;
+  label: string;
+};
 
 export default function Dashboard() {
-  const { user, gameState, resetHighScore, resetGame, logout } = useGame();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
+    if (!isLoading && !user) {
       router.push('/');
     }
-  }, [user, router]);
+  }, [user, isLoading, router]);
 
-  if (!user) return null;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" role="status" aria-label="Loading">
+        <div className="h-32 w-32 animate-pulse bg-foreground/10 rounded-xl"></div>
+      </div>
+    );
+  }
 
-  const handleNewGame = () => {
-    resetGame();
-    router.push('/game');
-  };
+  if (!user) {
+    return null;
+  }
 
-  const handleContinueGame = () => {
-    router.push(`/game/${gameState.gameMode}`);
-  };
+  const difficultyButtons: DifficultyButton[] = [
+    { mode: 'easy', gradient: 'from-green-500/20 to-emerald-500/20', hoverGradient: 'hover:from-green-500/30 hover:to-emerald-500/30', label: 'Easy Mode' },
+    { mode: 'medium', gradient: 'from-yellow-500/20 to-orange-500/20', hoverGradient: 'hover:from-yellow-500/30 hover:to-orange-500/30', label: 'Medium Mode' },
+    { mode: 'hard', gradient: 'from-red-500/20 to-rose-500/20', hoverGradient: 'hover:from-red-500/30 hover:to-rose-500/30', label: 'Hard Mode' },
+  ];
 
-  const handleLogout = () => {
-    logout();
-    router.push('/');
-  };
+  const achievements: Achievement[] = [
+    { id: 'perfect10', icon: '🎯', label: 'Perfect 10' },
+    { id: 'streak3', icon: '🔥', label: 'Streak 3' },
+    { id: 'speedster', icon: '⚡', label: 'Speedster' },
+    { id: 'riddleMaster', icon: '👑', label: 'Riddle Master' },
+  ];
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8">
-      <BackButton />
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-purple-900/20 to-indigo-900/20 backdrop-blur-sm">
-        <div className="w-full max-w-md backdrop-blur-md bg-foreground/10 rounded-xl sm:rounded-2xl border border-foreground/20 p-6 sm:p-8 shadow-2xl">
-          <div className="text-center mb-8">
-            <div className="flex flex-col items-center space-y-4">
-              <Avatar 
-                src={user.avatar} 
-                alt={`${user.username}'s avatar`}
-                size="lg"
-              />
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Dashboard
-              </h1>
-              <p className="text-xl text-foreground/80">Welcome, {user.username}!</p>
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900/20 to-indigo-900/20 p-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Welcome, {user.username}!
+          </h1>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div
+              className="bg-foreground/10 rounded-xl p-6 backdrop-blur-sm"
+              role="region"
+              aria-label="Player Statistics"
+            >
+              <h2 className="text-2xl font-semibold mb-4">Your Stats</h2>
+              <div className="space-y-2">
+                <p>High Score: {user.highScore}</p>
+                <p>Games Played: {user.stats.totalGamesPlayed}</p>
+                <p>Current Streak: {user.streak.current}</p>
+                <p>Best Streak: {user.streak.best}</p>
+              </div>
+            </div>
+
+            <div
+              className="bg-foreground/10 rounded-xl p-6 backdrop-blur-sm"
+              role="region"
+              aria-label="Player Achievements"
+            >
+              <h2 className="text-2xl font-semibold mb-4">Achievements</h2>
+              <div className="grid grid-cols-2 gap-4">
+                {achievements.map(({ id, icon, label }) => (
+                  <div
+                    key={id}
+                    className={`p-3 rounded-lg ${user.achievements[id] ? 'bg-purple-500/20' : 'bg-foreground/5'}`}
+                    role="status"
+                    aria-label={`Achievement ${label} ${user.achievements[id] ? 'Unlocked' : 'Locked'}`}
+                  >
+                    {icon} {label}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-foreground/20 backdrop-blur-sm">
-              <p className="text-lg mb-1">🏆 High Score</p>
-              <p className="text-3xl font-mono">{user.highScore}</p>
-            </div>
-
-            {gameState.isPlaying && (
-              <div className="p-4 rounded-lg bg-foreground/20 backdrop-blur-sm">
-                <p className="text-lg mb-1">📊 Current Score</p>
-                <p className="text-3xl font-mono">{gameState.score}</p>
-              </div>
-            )}
-
-            {gameState.isPlaying && (
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {difficultyButtons.map(({ mode, gradient, hoverGradient, label }) => (
               <button
-                onClick={handleContinueGame}
-                className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold hover:opacity-90 transition-opacity"
+                key={mode}
+                onClick={() => router.push(`/game/${mode}`)}
+                className={`p-6 rounded-xl bg-gradient-to-r ${gradient} ${hoverGradient} transition-all`}
+                aria-label={`Start ${label}`}
               >
-                Continue Game
+                {label}
               </button>
-            )}
-
-            <button
-              onClick={handleNewGame}
-              className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
-            >
-              New Game
-            </button>
-
-            <button
-              onClick={resetHighScore}
-              className="w-full px-6 py-3 rounded-lg bg-foreground/20 text-white font-semibold hover:bg-foreground/30 transition-colors"
-            >
-              Reset High Score
-            </button>
-
-            <button
-              onClick={handleLogout}
-              className="w-full px-6 py-3 rounded-lg bg-red-500/20 text-white font-semibold hover:bg-red-500/30 transition-colors"
-            >
-              Logout
-            </button>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }
-
-
 
 

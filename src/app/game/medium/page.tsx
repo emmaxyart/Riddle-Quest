@@ -1,7 +1,23 @@
+'use client';
+
+import { useGame } from '@/context/GameContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 
 export default function MediumModeNotFound() {
+  const { user } = useGame();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/');
+    }
+  }, [user, router]);
+
+  if (!user) return null;
+
   return (
     <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-yellow-900/20 to-amber-900/20">
       <BackButton />
@@ -49,4 +65,8 @@ export default function MediumModeNotFound() {
     </div>
   );
 }
+
+
+
+
 
