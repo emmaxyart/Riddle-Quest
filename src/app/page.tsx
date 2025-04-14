@@ -4,9 +4,11 @@ import { useGame } from '@/context/GameContext';
 import Link from 'next/link';
 import { useState } from 'react';
 import VolumeControl from '@/components/VolumeControl';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const { user, login, isMusicPlaying, toggleMusic } = useGame();
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [showInstructions, setShowInstructions] = useState(false);
   const [showMusicPrompt, setShowMusicPrompt] = useState(true);
@@ -19,7 +21,15 @@ export default function Home() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim()) {
+      const isNewUser = !localStorage.getItem(`user_${username.trim()}`);
       login(username.trim());
+      
+      // Redirect new users to avatar upload page
+      if (isNewUser) {
+        router.push('/avatar');
+      } else {
+        router.push('/dashboard');
+      }
     }
   };
 

@@ -15,6 +15,7 @@ interface GameContextType {
   resetHighScore: () => void;
   updateScore: (points: number, timeRemaining: number) => void;
   useHint: () => boolean;
+  updateAvatar: (avatarData: string) => Promise<void>;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -170,6 +171,19 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     return true;
   };
 
+  const updateAvatar = async (avatarData: string): Promise<void> => {
+    if (!user) return;
+
+    const updatedUser = {
+      ...user,
+      avatar: avatarData
+    };
+
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    localStorage.setItem(`user_${user.username}`, JSON.stringify(updatedUser));
+  };
+
   return (
     <GameContext.Provider value={{
       user,
@@ -182,6 +196,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       resetHighScore,
       updateScore,
       useHint,
+      updateAvatar,
     }}>
       {children}
     </GameContext.Provider>
