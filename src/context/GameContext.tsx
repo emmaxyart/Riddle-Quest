@@ -27,7 +27,11 @@ const DEFAULT_GAME_STATE: GameState = {
   score: 0,
   isPlaying: false,
   multiplier: 0,
-  gameMode: 'easy'  // Adding default game mode
+  gameMode: 'easy' // Adding default game mode
+  ,
+  timeElapsed: 0,
+  correctAnswers: 0,
+  hintsUsed: 0
 };
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
@@ -169,18 +173,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateScore = (points: number, timeRemaining: number, answerTime: number) => {
-    try {
-      if (!user) return;
+    if (!user) {
+      console.error('No user found when updating score');
+      return;
+    }
 
+    try {
       const timeBonus = Math.floor(timeRemaining / 5);
-      const totalPoints = points + timeBonus;
+      const totalPoints = Math.max(0, points + timeBonus); // Ensure non-negative score
       const newScore = gameState.score + totalPoints;
 
       const updatedUser = {
         ...user,
         totalCorrectAnswers: user.totalCorrectAnswers + 1,
-        fastestAnswer: Math.min(user.fastestAnswer, answerTime),
-        highScore: newScore > user.highScore ? newScore : user.highScore
+        fastestAnswer: Math.min(user.fastestAnswer || Infinity, answerTime),
+        highScore: Math.max(newScore, user.highScore || 0)
       };
 
       setGameState(prev => ({ ...prev, score: newScore }));

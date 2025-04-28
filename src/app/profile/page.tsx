@@ -27,12 +27,12 @@ export default function ProfilePage() {
   if (!user) return null;
 
   const userStats: UserStats = {
-    totalCorrectAnswers: user.totalCorrectAnswers,
-    streak: user.streak,
-    fastestAnswer: user.fastestAnswer,
-    highScore: user.highScore,
-    gamesWithoutHints: user.gamesWithoutHints,
-    perfectGames: 0
+    totalCorrectAnswers: user?.totalCorrectAnswers || 0,
+    streak: user?.streak || 0,
+    fastestAnswer: user?.fastestAnswer || Infinity,
+    highScore: user?.highScore || 0,
+    gamesWithoutHints: user?.gamesWithoutHints || 0,
+    perfectGames: user?.perfectGames || 0
   };
 
   const earnedBadges = badges.map(badge => ({
@@ -183,6 +183,7 @@ export default function ProfilePage() {
     </div>
   );
 }
+
 
 
 

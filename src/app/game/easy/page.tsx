@@ -4,10 +4,10 @@ import { useGame } from '@/context/GameContext';
 import { useState, useEffect, useCallback } from 'react';
 import Loading from '@/components/Loading';
 import { Riddle } from '@/types';
-import Link from 'next/link';
 import { generateHint } from '@/utils/hints';
 import { playSound } from '@/utils/sounds';
 import BackButton from '@/components/BackButton';
+import GameComplete from '@/components/GameComplete';
 
 export default function EasyMode() {
   const {
@@ -194,6 +194,40 @@ export default function EasyMode() {
     };
   };
 
+  const calculateAchievements = (): string[] => {
+    const achievements: string[] = [];
+    
+    // Perfect Score Achievement
+    if (gameState.score === TOTAL_RIDDLES * 10) {
+      achievements.push('Perfect Score');
+    }
+    
+    // Speed Demon Achievement (average answer time less than 15 seconds)
+    if (gameState.timeElapsed && gameState.correctAnswers) {
+      const averageTime = gameState.timeElapsed / gameState.correctAnswers;
+      if (averageTime < 15) {
+        achievements.push('Speed Demon');
+      }
+    }
+    
+    // No Hints Achievement
+    if (gameState.hintsUsed === 0) {
+      achievements.push('No Hints Used');
+    }
+    
+    // First Win Achievement
+    if (user?.totalGames === 1) {
+      achievements.push('First Win');
+    }
+    
+    // Streak Achievement
+    if (user?.streak && user.streak >= 3) {
+      achievements.push('Streak Master');
+    }
+    
+    return achievements;
+  };
+
   useEffect(() => {
     if (currentRiddleIndex === riddles.length) {
       completeGame(usedHintsThisGame);
@@ -332,44 +366,20 @@ export default function EasyMode() {
 
       {/* Game Over Screen */}
       {currentRiddleIndex >= TOTAL_RIDDLES && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="w-full max-w-lg bg-gradient-to-br from-purple-900/90 to-indigo-900/90 rounded-2xl border border-foreground/20 p-6 sm:p-8 shadow-2xl m-4">
-            <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              🎮 Game Over!
-            </h2>
-            
-            <div className="space-y-4 mb-6">
-              <div className="p-4 rounded-lg bg-foreground/20">
-                <p className="text-lg mb-1">Player</p>
-                <p className="text-2xl font-semibold">{user?.username}</p>
-              </div>
-              
-              <div className="p-4 rounded-lg bg-foreground/20">
-                <p className="text-lg mb-1">Final Score</p>
-                <p className="text-3xl font-mono">{gameState.score}</p>
-              </div>
-              
-              <div className="p-4 rounded-lg bg-foreground/20">
-                <p className="text-lg mb-1">High Score</p>
-                <p className="text-3xl font-mono">{user?.highScore}</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={handleResetGame}
-                className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
-              >
-                Play Again
-              </button>
-              
-              <Link
-                href="/dashboard"
-                className="px-6 py-3 rounded-lg bg-foreground/20 text-white font-semibold hover:bg-foreground/30 transition-colors text-center"
-              >
-                Back to Dashboard
-              </Link>
-            </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-2xl bg-gradient-to-br from-purple-900/90 to-indigo-900/90 rounded-2xl border border-foreground/20 p-6 sm:p-8 shadow-2xl">
+            <GameComplete 
+              stats={{
+                score: gameState.score,
+                totalRiddles: TOTAL_RIDDLES,
+                difficulty: 'easy',
+                achievements: calculateAchievements(),
+                timeElapsed: gameState.timeElapsed,
+                correctAnswers: gameState.correctAnswers,
+                hintsUsed: gameState.hintsUsed
+              }}
+              onPlayAgain={handleResetGame}
+            />
           </div>
         </div>
       )}

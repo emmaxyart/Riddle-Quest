@@ -1,4 +1,5 @@
 export interface Badge {
+  earned: boolean;
   id: string;
   icon: string;
   title: string;
@@ -22,6 +23,7 @@ export const badges: Badge[] = [
     title: 'Sharp Shooter',
     description: '10 Correct Answers',
     requirement: (stats) => stats.totalCorrectAnswers >= 10,
+    earned: false
   },
   {
     id: 'streak',
@@ -29,6 +31,7 @@ export const badges: Badge[] = [
     title: 'On Fire',
     description: '3-Day Streak',
     requirement: (stats) => stats.streak >= 3,
+    earned: false
   },
   {
     id: 'fast-thinker',
@@ -36,6 +39,7 @@ export const badges: Badge[] = [
     title: 'Fast Thinker',
     description: 'Answer under 10 seconds',
     requirement: (stats) => stats.fastestAnswer < 10,
+    earned: false
   },
   {
     id: 'high-scorer',
@@ -43,6 +47,7 @@ export const badges: Badge[] = [
     title: 'High Scorer',
     description: 'Score over 1000 points',
     requirement: (stats) => stats.highScore > 1000,
+    earned: false
   },
   {
     id: 'hint-saver',
@@ -50,6 +55,7 @@ export const badges: Badge[] = [
     title: 'Wise One',
     description: 'Complete game without using hints',
     requirement: (stats) => stats.gamesWithoutHints > 0,
+    earned: false
   },
   {
     id: 'perfect-game',
@@ -57,5 +63,8 @@ export const badges: Badge[] = [
     title: 'Perfect Game',
     description: 'Complete a game with 100% accuracy',
     requirement: (stats) => stats.perfectGames > 0,
+    earned: false
   },
 ];
+
+

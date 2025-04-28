@@ -24,9 +24,27 @@ export interface User {
 }
 
 export interface GameState {
+  timeElapsed: number;
+  correctAnswers: number;
+  hintsUsed: number;
   currentRiddle: number;
   score: number;
   isPlaying: boolean;
   gameMode: 'easy' | 'medium' | 'hard';
   multiplier: number;
+}
+
+export interface GameStats {
+  score: number;
+  totalRiddles: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  achievements: string[];
+  timeElapsed: number;
+  correctAnswers: number;
+  hintsUsed: number;
+}
+
+export interface ShareResult {
+  success: boolean;
+  message?: string;
 }
