@@ -1,36 +1,161 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎮 Riddle Quest Game
 
-## Getting Started
+A dynamic and engaging riddle game built with Next.js, where players can test their wit and compete with friends through various difficulty levels.
 
-First, run the development server:
+## ✨ Features
 
+- 🧩 Multiple difficulty levels (Easy, Medium, Hard)
+- 🏆 Achievement system
+- 📊 Real-time score tracking
+- ⏱️ Time-based challenges
+- 💡 Hint system
+- 🎵 Sound effects and background music
+- 📱 Responsive design
+- 🔗 Social sharing capabilities
+- 📈 Player statistics and profiles
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18.x or higher
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/riddle-quest-game.git
+cd riddle-quest-game
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+RAPIDAPI_KEY=your_rapidapi_key_here
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to start playing!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Built With
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js 15.2.4](https://nextjs.org/) - React Framework
+- [React 19.0.0](https://reactjs.org/) - UI Library
+- [TypeScript](https://www.typescriptlang.org/) - Programming Language
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Framer Motion](https://www.framer.com/motion/) - Animations
+- [RapidAPI](https://rapidapi.com/) - Riddle Data Provider
 
-## Learn More
+## 📁 Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── api/               # API routes
+│   ├── game/              # Game routes
+│   └── layout.tsx         # Root layout
+├── components/            # React components
+├── context/              # State management
+├── types/                # TypeScript definitions
+└── utils/                # Utility functions
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎮 Game Mechanics
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Scoring System**: Points are awarded based on:
+  - Speed of answer
+  - Difficulty level
+  - Hint usage (penalties applied)
+  - Correct answer streaks
 
-## Deploy on Vercel
+- **Achievements**: Unlock special achievements for:
+  - Perfect scores
+  - Speed records
+  - No hints used
+  - Winning streaks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔄 API Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The game uses both internal and external APIs:
+- RapidAPI for riddle data
+- Custom API routes for game management
+- Fallback mock data system
+
+## 📱 Social Features
+
+Share your achievements on:
+- Twitter/X
+- Facebook
+- WhatsApp
+- Copy to clipboard
+
+## 🧪 Running Tests
+
+```bash
+npm run test
+# or
+yarn test
+```
+
+## 📦 Building for Production
+
+```bash
+npm run build
+# or
+yarn build
+```
+
+## 🚀 Deployment
+
+The easiest way to deploy is using the [Vercel Platform](https://vercel.com):
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/riddle-quest-game)
+
+## 📝 Environment Variables
+
+Required environment variables:
+
+```env
+NEXT_PUBLIC_SITE_URL=your_site_url
+RAPIDAPI_KEY=your_rapidapi_key
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## 👏 Acknowledgments
+
+- RapidAPI for providing the riddle data
+- Next.js team for the amazing framework
+- All contributors and players
+
+## 📞 Support
+
+For support, email emmanueledobor34@gmail.com
+
+---
+
+Made with ❤️ by [Emmanuel Edobor]
