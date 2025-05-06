@@ -140,18 +140,28 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resetGame = () => {
+  const resetGame = (gameMode = 'easy') => {
     setGameState({
       ...DEFAULT_GAME_STATE,
       currentRiddle: 0,
       score: 0,
       isPlaying: true,
+      gameMode: gameMode as 'easy' | 'medium' | 'hard',
     });
 
     if (user) {
+      // Set hints based on game mode
+      let hintsCount = 15; // Default for easy mode
+      
+      if (gameMode === 'medium') {
+        hintsCount = 13; // Reduced hints for medium mode
+      } else if (gameMode === 'hard') {
+        hintsCount = 10; // Even fewer hints for hard mode
+      }
+      
       const updatedUser = {
         ...user,
-        hintsRemaining: 15,
+        hintsRemaining: hintsCount,
         totalGames: user.totalGames + 1,
         lastPlayedDate: new Date().toISOString(),
       };

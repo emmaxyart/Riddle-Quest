@@ -1,10 +1,10 @@
 export const socialConfig = {
-  baseUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://[YOUR-WEBSITE-URL]',
+  baseUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://emmaxyy-riddle-game.vercel.app/',
   defaultTitle: 'Riddle Quest - Test Your Wit!',
   defaultDescription: 'Challenge yourself with engaging riddles and compete with friends!',
   social: {
-    twitter: '@yourtwitterhandle',
-    facebook: 'yourfacebookpage',
+    twitter: 'www.twitter.com',
+    facebook: 'www.facebook.com',
   },
 };
 

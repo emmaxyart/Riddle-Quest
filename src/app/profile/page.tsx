@@ -15,6 +15,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState('');
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -49,6 +50,7 @@ export default function ProfilePage() {
   };
 
   const handleLogout = () => {
+    setIsLoggingOut(true);
     logout();
     router.push('/');
   };
@@ -166,9 +168,10 @@ export default function ProfilePage() {
             <div className="flex gap-4">
               <button
                 onClick={handleLogout}
+                disabled={isLoggingOut}
                 className="flex-1 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600"
               >
-                Logout
+                {isLoggingOut ? "Logging out..." : "Logout"}
               </button>
               <button
                 onClick={() => setShowConfirmLogout(false)}
@@ -183,6 +186,7 @@ export default function ProfilePage() {
     </div>
   );
 }
+
 
 
 

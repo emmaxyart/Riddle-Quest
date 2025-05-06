@@ -73,10 +73,11 @@ export default function Dashboard() {
           </div>
 
           {/* Avatar section - centered on mobile */}
-          <div className="flex justify-center md:justify-end mb-8">
+          <div className="flex flex-col items-center md:items-end mb-8">
             <button
               onClick={() => router.push('/profile')}
               className="p-3 rounded-full bg-foreground/10 hover:bg-foreground/20 transition-colors"
+              aria-label="View profile"
             >
               {user.avatar ? (
                 <div className="relative w-24 h-24 md:w-20 md:h-20">
@@ -95,6 +96,10 @@ export default function Dashboard() {
                 </div>
               )}
             </button>
+            <div className="flex items-center mt-2 text-sm text-foreground/70">
+              <span className="mr-1">Click Avatar to view your profile</span>
+              <span>👆</span>
+            </div>
           </div>
 
           {/* Instructions Modal */}

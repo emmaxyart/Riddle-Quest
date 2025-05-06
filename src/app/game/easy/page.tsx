@@ -8,8 +8,10 @@ import { generateHint } from '@/utils/hints';
 import { playSound } from '@/utils/sounds';
 import BackButton from '@/components/BackButton';
 import GameComplete from '@/components/GameComplete';
+import { useRouter } from 'next/navigation';
 
 export default function EasyMode() {
+  const router = useRouter();
   const {
     user,
     gameState,
@@ -19,6 +21,18 @@ export default function EasyMode() {
     useHint,
     completeGame
   } = useGame();
+
+  // Add new state variables
+  const [isResetting, setIsResetting] = useState(false);
+  const [isQuitting, setIsQuitting] = useState(false);
+
+  // Add handler for quitting game
+  const handleQuitGame = () => {
+    if (confirm("Are you sure you want to quit? Your progress will be lost.")) {
+      setIsQuitting(true);
+      router.push('/dashboard');
+    }
+  };
 
   // Call useHint at the top level
   const handleHint = useHint;
@@ -178,12 +192,15 @@ export default function EasyMode() {
   }, [user?.hintsRemaining, handleHint, riddles, currentRiddleIndex]);
 
   const handleResetGame = () => {
+    setIsResetting(true);
     resetGame();
     setCurrentRiddleIndex(0);
     setAnswer('');
     setShowHint(false);
     setFeedback({ message: '', type: null });
-    fetchRiddles();
+    fetchRiddles().finally(() => {
+      setIsResetting(false);
+    });
   };
 
   const calculateProgress = () => {
@@ -245,129 +262,115 @@ export default function EasyMode() {
   const progress = calculateProgress();
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-green-900/20 to-emerald-900/20">
       <BackButton />
-      {/* Progress Bar */}
-      {currentRiddleIndex < TOTAL_RIDDLES && (
-        <div className="mb-4 sm:mb-6">
-          <div className="flex justify-between mb-2">
-            <span className="text-xs sm:text-sm">
-              Progress: {progress.current} of {TOTAL_RIDDLES}
-            </span>
-            <span className="text-xs sm:text-sm">
-              {progress.percentage}%
-            </span>
-          </div>
-          <div className="h-1.5 sm:h-2 bg-foreground/20 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-300 ease-in-out"
-              style={{ 
-                width: `${progress.percentage}%`,
-                transition: 'width 0.5s ease-in-out'
-              }}
-            />
-          </div>
-          <div className="mt-1 text-xs text-foreground/60 text-center">
-            {progress.remaining} questions remaining
-          </div>
-        </div>
-      )}
-
-      {/* Game Content */}
-      {currentRiddleIndex < TOTAL_RIDDLES && riddles[currentRiddleIndex] && (
-        <div className="w-full max-w-2xl backdrop-blur-md bg-foreground/10 rounded-xl sm:rounded-2xl border border-foreground/20 p-4 sm:p-6 md:p-8 shadow-2xl mt-24 sm:mt-28 mx-auto">
-          {/* Timer Display */}
-          <div className="mb-4 text-center">
-            <span className={`text-2xl font-bold ${
-              timeRemaining <= 10 ? 'text-red-500' : 'text-foreground'
-            }`}>
-              ⏱️ {timeRemaining}s
-            </span>
-          </div>
-
-          {/* Riddle Display */}
-          <div className="mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3">
-              Riddle #{progress.current}
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-foreground/90">
-              {riddles[currentRiddleIndex].question}
-            </p>
-          </div>
-
-          {/* Hint Display */}
-          {showHint && (
-            <div className="mb-6 p-4 rounded-lg bg-blue-500/20 border border-blue-500/30">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-blue-400">💡</span>
-                <h3 className="text-blue-400 font-semibold">Hint</h3>
+      <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
+        <div className="w-full max-w-md backdrop-blur-md bg-foreground/10 rounded-2xl border border-foreground/20 p-8 shadow-2xl">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+              Easy Mode
+            </h1>
+            <div className="flex justify-between items-center mb-4">
+              <div className="text-sm text-foreground/70">
+                Score: <span className="font-bold text-green-400">{gameState.score}</span>
               </div>
-              <p className="text-blue-200">{feedback.message}</p>
+              <div className="text-sm text-foreground/70">
+                Time: <span className={`font-bold ${timeRemaining < 10 ? 'text-red-400' : 'text-green-400'}`}>{timeRemaining}s</span>
+              </div>
             </div>
+          </div>
+
+          {currentRiddleIndex < TOTAL_RIDDLES && riddles[currentRiddleIndex] && (
+            <>
+              <div className="p-4 rounded-xl bg-foreground/20 backdrop-blur-sm mb-4">
+                <h2 className="text-lg font-semibold mb-2">Riddle #{currentRiddleIndex + 1}</h2>
+                <p className="text-foreground/90">{riddles[currentRiddleIndex].question}</p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <input
+                    type="text"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    placeholder="Your answer..."
+                    className="w-full p-3 rounded-lg bg-foreground/10 border border-foreground/20 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                    onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer()}
+                  />
+                </div>
+
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleSubmitAnswer}
+                    className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold hover:opacity-90 transition-opacity"
+                  >
+                    Submit
+                  </button>
+                  <button
+                    onClick={handleShowHint}
+                    disabled={!user?.hintsRemaining}
+                    className={`px-4 py-2 rounded-lg border ${
+                      user?.hintsRemaining
+                        ? 'border-green-500/50 text-green-400 hover:bg-green-500/10'
+                        : 'border-foreground/20 text-foreground/40'
+                    } transition-colors`}
+                  >
+                    Hint ({user?.hintsRemaining || 0})
+                  </button>
+                </div>
+              </div>
+
+              {feedback.message && (
+                <div
+                  className={`p-3 rounded-lg my-4 text-center ${
+                    feedback.type === 'success'
+                      ? 'bg-green-500/20 text-green-400'
+                      : feedback.type === 'error'
+                      ? 'bg-red-500/20 text-red-400'
+                      : 'bg-blue-500/20 text-blue-400'
+                  }`}
+                >
+                  {feedback.message}
+                </div>
+              )}
+
+              <div className="mt-4">
+                <div className="w-full bg-foreground/10 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full"
+                    style={{ width: `${(currentRiddleIndex + 1) / TOTAL_RIDDLES * 100}%` }}
+                  />
+                </div>
+                <div className="mt-1 text-xs text-foreground/60 text-center">
+                  {TOTAL_RIDDLES - (currentRiddleIndex + 1)} questions remaining
+                </div>
+              </div>
+
+              <div className="flex space-x-2 mt-4">
+                <button
+                  onClick={handleResetGame}
+                  disabled={isResetting}
+                  className="flex-1 px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
+                >
+                  {isResetting ? "Resetting Game..." : "Reset Game"}
+                </button>
+                <button
+                  onClick={handleQuitGame}
+                  disabled={isQuitting}
+                  className="flex-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+                >
+                  {isQuitting ? "Quitting Game..." : "Quit Game"}
+                </button>
+              </div>
+            </>
           )}
-
-          {/* Answer Input */}
-          <div className="space-y-3 sm:space-y-4">
-            <input
-              type="text"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSubmitAnswer()}
-              className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-foreground/5 border border-foreground/20 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm text-base sm:text-lg"
-              placeholder="Enter your answer..."
-            />
-
-            {/* Feedback Message */}
-            {feedback.message && (
-              <div className={`px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl backdrop-blur-sm text-sm sm:text-base ${
-                feedback.type === 'success' ? 'bg-green-500/20 text-green-200' : 
-                feedback.type === 'error' ? 'bg-red-500/20 text-red-200' : 
-                'bg-blue-500/20 text-blue-200'
-              }`}>
-                {feedback.message}
-              </div>
-            )}
-
-            {/* Game Controls */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-6">
-              <button
-                onClick={handleSubmitAnswer}
-                className="col-span-1 sm:col-span-2 px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-base sm:text-lg hover:opacity-90 transition-opacity"
-              >
-                Submit Answer
-              </button>
-              
-              <button
-                onClick={handleShowHint}
-                disabled={!user?.hintsRemaining}
-                className="px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl backdrop-blur-sm bg-blue-500/20 hover:bg-blue-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-              >
-                Use Hint ({user?.hintsRemaining ?? 0})
-              </button>
-              
-              <button
-                onClick={handleResetGame}
-                className="px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl backdrop-blur-sm bg-yellow-500/20 hover:bg-yellow-500/30 transition-colors text-sm sm:text-base"
-              >
-                Reset Game
-              </button>
-            </div>
-          </div>
         </div>
-      )}
-
-      {/* High Score Reset Button */}
-      <button
-        onClick={resetHighScore}
-        className="fixed bottom-4 right-4 px-4 py-2 rounded-lg backdrop-blur-sm bg-red-500/20 hover:bg-red-500/30 transition-colors text-sm"
-      >
-        Reset High Scores
-      </button>
+      </div>
 
       {/* Game Over Screen */}
       {currentRiddleIndex >= TOTAL_RIDDLES && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-2xl bg-gradient-to-br from-purple-900/90 to-indigo-900/90 rounded-2xl border border-foreground/20 p-6 sm:p-8 shadow-2xl">
+          <div className="w-full max-w-2xl bg-gradient-to-br from-green-900/90 to-emerald-900/90 rounded-2xl border border-foreground/20 p-6 sm:p-8 shadow-2xl">
             <GameComplete 
               stats={{
                 score: gameState.score,

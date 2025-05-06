@@ -13,6 +13,7 @@ export default function IntroPage() {
   const [showContent, setShowContent] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -66,12 +67,19 @@ export default function IntroPage() {
     visible: { opacity: 1, y: 0, scale: 1 }
   };
 
+  const handleStartGame = () => {
+    setIsStarting(true);
+    setShowLoginModal(true);
+    // Reset the loading state after a short delay
+    setTimeout(() => setIsStarting(false), 500);
+  };
+
   return (
     <div className="relative min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-black to-black">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
       
-      {/* Audio and Instructions Controls */}
-      <div className="absolute top-4 right-4 flex items-center gap-4 z-50">
+      {/* Audio Controls - Removed Instructions Button */}
+      {/* <div className="absolute top-4 right-4 flex items-center gap-4 z-50">
         <div className="flex items-center gap-2">
           <button
             onClick={toggleMusic}
@@ -82,15 +90,7 @@ export default function IntroPage() {
           </button>
           <VolumeControl />
         </div>
-        
-        <button
-          onClick={() => setShowInstructions(true)}
-          className="p-2 rounded-full bg-foreground/10 hover:bg-foreground/20 transition-colors"
-          aria-label="Show instructions"
-        >
-          ❔
-        </button>
-      </div>
+      </div> */}
 
       {showContent && (
         <motion.div 
@@ -118,13 +118,43 @@ export default function IntroPage() {
             </p>
           </motion.div>
 
-          <motion.button
-            variants={contentVariants}
-            className="px-8 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
-            onClick={() => setShowLoginModal(true)}
-          >
-            Begin Your Quest
-          </motion.button>
+          <motion.div variants={contentVariants} className="flex flex-col items-center">
+            <motion.button
+              variants={contentVariants}
+              className="px-8 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
+              onClick={handleStartGame}
+              disabled={isStarting}
+            >
+              {isStarting ? "Loading..." : "Begin Your Quest"}
+            </motion.button>
+            
+            <motion.button
+              variants={contentVariants}
+              onClick={() => setShowInstructions(true)}
+              className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
+            >
+              <span className="text-lg">❔</span>
+              <span>Game Instructions</span>
+            </motion.button>
+            
+            <motion.button
+              variants={contentVariants}
+              onClick={toggleMusic}
+              className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
+            >
+              <span className="text-lg">{isMusicPlaying ? '🔊' : '🔈'}</span>
+              <span>{isMusicPlaying ? 'Disable Sound' : 'Enable Sound'}</span>
+            </motion.button>
+            
+            {isMusicPlaying && (
+              <motion.div 
+                variants={contentVariants}
+                className="mt-2"
+              >
+                <VolumeControl />
+              </motion.div>
+            )}
+          </motion.div>
         </motion.div>
       )}
 

@@ -507,6 +507,235 @@ const easyRiddles = [
   }
 ];
 
+// Add medium difficulty riddles
+const mediumRiddles = [
+  {
+    id: 101,
+    question: "I'm light as a feather, but the strongest person can't hold me for more than a few minutes. What am I?",
+    answer: "breath",
+    difficulty: "medium",
+    points: 20,
+    hint: "You do this constantly without thinking",
+    timeLimit: 15
+  },
+  {
+    id: 102,
+    question: "The more you take, the more you leave behind. What am I?",
+    answer: "footsteps",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about walking",
+    timeLimit: 15
+  },
+  {
+    id: 103,
+    question: "What has a head, a tail, is brown, and has no legs?",
+    answer: "penny",
+    difficulty: "medium",
+    points: 20,
+    hint: "It's a type of currency",
+    timeLimit: 15
+  },
+  {
+    id: 104,
+    question: "What building has the most stories?",
+    answer: "library",
+    difficulty: "medium",
+    points: 20,
+    hint: "Books are kept here",
+    timeLimit: 15
+  },
+  {
+    id: 105,
+    question: "What can run but never walks, has a mouth but never talks, has a head but never weeps, has a bed but never sleeps?",
+    answer: "river",
+    difficulty: "medium",
+    points: 20,
+    hint: "It's a natural water feature",
+    timeLimit: 15
+  },
+  {
+    id: 106,
+    question: "I am taken from a mine, and shut up in a wooden case, from which I am never released, and yet I am used by almost every person. What am I?",
+    answer: "pencil lead",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about writing instruments",
+    timeLimit: 15
+  },
+  {
+    id: 107,
+    question: "What goes up but never comes down?",
+    answer: "age",
+    difficulty: "medium",
+    points: 20,
+    hint: "Everyone has this and it only increases",
+    timeLimit: 15
+  },
+  {
+    id: 108,
+    question: "What can travel around the world while staying in a corner?",
+    answer: "stamp",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for mail",
+    timeLimit: 15
+  },
+  {
+    id: 109,
+    question: "What has 13 hearts but no other organs?",
+    answer: "deck of cards",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for games",
+    timeLimit: 15
+  },
+  {
+    id: 110,
+    question: "What has a neck but no head?",
+    answer: "bottle",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for storing liquids",
+    timeLimit: 15
+  },
+  {
+    id: 111,
+    question: "What gets wetter as it dries?",
+    answer: "towel",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used after bathing",
+    timeLimit: 15
+  },
+  {
+    id: 112,
+    question: "What has words but never speaks?",
+    answer: "book",
+    difficulty: "medium",
+    points: 20,
+    hint: "Contains stories and information",
+    timeLimit: 15
+  },
+  {
+    id: 113,
+    question: "What has a thumb and four fingers but is not alive?",
+    answer: "glove",
+    difficulty: "medium",
+    points: 20,
+    hint: "Worn on hands",
+    timeLimit: 15
+  },
+  {
+    id: 114,
+    question: "What has cities but no houses, forests but no trees, and rivers but no water?",
+    answer: "map",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for navigation",
+    timeLimit: 15
+  },
+  {
+    id: 115,
+    question: "What can fill a room but takes up no space?",
+    answer: "light",
+    difficulty: "medium",
+    points: 20,
+    hint: "Helps you see",
+    timeLimit: 15
+  },
+  {
+    id: 116,
+    question: "I have keys but no locks. I have space but no room. You can enter, but you can't go inside. What am I?",
+    answer: "keyboard",
+    difficulty: "medium",
+    points: 20,
+    hint: "You use this to type",
+    timeLimit: 15
+  },
+  {
+    id: 117,
+    question: "What has a neck but no head, two arms but no hands?",
+    answer: "shirt",
+    difficulty: "medium",
+    points: 20,
+    hint: "You wear this every day",
+    timeLimit: 15
+  },
+  {
+    id: 118,
+    question: "What gets bigger when more is taken away?",
+    answer: "hole",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about digging",
+    timeLimit: 15
+  },
+  {
+    id: 119,
+    question: "I'm tall when I'm young, and I'm short when I'm old. What am I?",
+    answer: "candle",
+    difficulty: "medium",
+    points: 20,
+    hint: "I provide light",
+    timeLimit: 15
+  },
+  {
+    id: 120,
+    question: "What has many keys but can't open a single lock?",
+    answer: "piano",
+    difficulty: "medium",
+    points: 20,
+    hint: "It's a musical instrument",
+    timeLimit: 15
+  },
+  {
+    id: 121,
+    question: "What can travel around the world while staying in a corner?",
+    answer: "stamp",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for mail",
+    timeLimit: 15
+  },
+  {
+    id: 122,
+    question: "What has 13 hearts but no other organs?",
+    answer: "deck of cards",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for games",
+    timeLimit: 15
+  },
+  {
+    id: 123,
+    question: "What has words but never speaks?",
+    answer: "book",
+    difficulty: "medium",
+    points: 20,
+    hint: "You read it",
+    timeLimit: 15
+  },
+  {
+    id: 124,
+    question: "What runs but never walks, has a mouth but never talks?",
+    answer: "river",
+    difficulty: "medium",
+    points: 20,
+    hint: "Found in nature",
+    timeLimit: 15
+  },
+  {
+    id: 125,
+    question: "What can be cracked, made, told, and played?",
+    answer: "joke",
+    difficulty: "medium",
+    points: 20,
+    hint: "Makes people laugh",
+    timeLimit: 15
+  }
+];
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const difficulty = searchParams.get('difficulty');
@@ -514,6 +743,10 @@ export async function GET(request: Request) {
   if (difficulty === 'easy') {
     // Shuffle the array and return exactly 40 riddles
     const shuffledRiddles = shuffleArray([...easyRiddles]);
+    return NextResponse.json(shuffledRiddles);
+  } else if (difficulty === 'medium') {
+    // Return medium difficulty riddles
+    const shuffledRiddles = shuffleArray([...mediumRiddles]);
     return NextResponse.json(shuffledRiddles);
   }
 

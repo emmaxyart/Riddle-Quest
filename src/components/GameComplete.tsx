@@ -2,6 +2,7 @@
 
 import ShareButton from './ShareButton';
 import type { GameStats } from '@/types';
+import { useState } from 'react';
 
 interface GameCompleteProps {
   stats: GameStats;
@@ -10,6 +11,14 @@ interface GameCompleteProps {
 
 export default function GameComplete({ stats, onPlayAgain }: GameCompleteProps) {
   const percentage = (stats.score / (stats.totalRiddles * 10)) * 100;
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handlePlayAgain = () => {
+    setIsResetting(true);
+    onPlayAgain();
+    // Reset state after a short delay to show loading state
+    setTimeout(() => setIsResetting(false), 500);
+  };
 
   return (
     <div className="w-full max-w-lg mx-auto">
@@ -49,10 +58,11 @@ export default function GameComplete({ stats, onPlayAgain }: GameCompleteProps) 
         
         <div className="grid grid-cols-2 gap-4 mt-4">
           <button
-            onClick={onPlayAgain}
-            className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
+            onClick={handlePlayAgain}
+            disabled={isResetting}
+            className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition-opacity"
           >
-            Play Again
+            {isResetting ? "Starting New Game..." : "Play Again"}
           </button>
           
           <a
@@ -66,6 +76,7 @@ export default function GameComplete({ stats, onPlayAgain }: GameCompleteProps) 
     </div>
   );
 }
+
 
 
 
