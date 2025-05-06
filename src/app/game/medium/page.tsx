@@ -37,13 +37,11 @@ export default function MediumMode() {
   const [currentRiddleIndex, setCurrentRiddleIndex] = useState(0);
   const [answer, setAnswer] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(15); // Changed from 25 to 15
-  const [showHint, setShowHint] = useState(false);
   const [feedback, setFeedback] = useState<{
     message: string;
     type: 'success' | 'error' | 'info' | null;
   }>({ message: '', type: null });
   const [startTime, setStartTime] = useState<number>(0);
-  const [usedHintsThisGame, setUsedHintsThisGame] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [isQuitting, setIsQuitting] = useState(false);
 
@@ -79,7 +77,6 @@ export default function MediumMode() {
     if (currentRiddleIndex < riddles.length - 1) {
       setCurrentRiddleIndex(prev => prev + 1);
       setAnswer('');
-      setShowHint(false);
       setFeedback({ message: '', type: null });
     } else {
       // Game is over
@@ -171,12 +168,10 @@ export default function MediumMode() {
     }
 
     if (handleHint()) {
-      setUsedHintsThisGame(true);
       const generatedHint = generateHint(
         riddles[currentRiddleIndex].question,
         riddles[currentRiddleIndex].answer
       );
-      setShowHint(true);
       setFeedback({
         message: generatedHint,
         type: 'info'
@@ -194,7 +189,6 @@ export default function MediumMode() {
     resetGame();
     setCurrentRiddleIndex(0);
     setAnswer('');
-    setShowHint(false);
     setFeedback({ message: '', type: null });
     fetchRiddles().finally(() => {
       setIsResetting(false);
@@ -233,7 +227,8 @@ export default function MediumMode() {
   // Game is complete
   if (currentRiddleIndex >= riddles.length && riddles.length > 0) {
     const achievements = calculateAchievements();
-    completeGame(true);
+    // Pass a boolean based on gameState.hintsUsed instead of usedHintsThisGame
+    completeGame(gameState.hintsUsed > 0);
     
     return (
       <GameComplete 
@@ -368,6 +363,10 @@ export default function MediumMode() {
     </div>
   );
 }
+
+
+
+
 
 
 

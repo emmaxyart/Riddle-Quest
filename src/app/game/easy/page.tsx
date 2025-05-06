@@ -16,7 +16,6 @@ export default function EasyMode() {
     user,
     gameState,
     resetGame,
-    resetHighScore,
     updateScore,
     useHint,
     completeGame
@@ -42,7 +41,6 @@ export default function EasyMode() {
   const [currentRiddleIndex, setCurrentRiddleIndex] = useState(0);
   const [answer, setAnswer] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(30);
-  const [showHint, setShowHint] = useState(false);
   const [feedback, setFeedback] = useState<{
     message: string;
     type: 'success' | 'error' | 'info' | null;
@@ -73,14 +71,16 @@ export default function EasyMode() {
   };
 
   useEffect(() => {
+    // Reset game when component mounts
+    resetGame();
     fetchRiddles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const moveToNextRiddle = useCallback(() => {
     if (currentRiddleIndex < riddles.length - 1) {
       setCurrentRiddleIndex(prev => prev + 1);
       setAnswer('');
-      setShowHint(false);
       setFeedback({ message: '', type: null });
     } else {
       // Game is over
@@ -178,7 +178,6 @@ export default function EasyMode() {
         riddles[currentRiddleIndex].question,
         riddles[currentRiddleIndex].answer
       );
-      setShowHint(true);
       setFeedback({
         message: generatedHint,
         type: 'info'
@@ -196,7 +195,6 @@ export default function EasyMode() {
     resetGame();
     setCurrentRiddleIndex(0);
     setAnswer('');
-    setShowHint(false);
     setFeedback({ message: '', type: null });
     fetchRiddles().finally(() => {
       setIsResetting(false);
@@ -319,51 +317,53 @@ export default function EasyMode() {
                   </button>
                 </div>
               </div>
-
-              {feedback.message && (
-                <div
-                  className={`p-3 rounded-lg my-4 text-center ${
-                    feedback.type === 'success'
-                      ? 'bg-green-500/20 text-green-400'
-                      : feedback.type === 'error'
-                      ? 'bg-red-500/20 text-red-400'
-                      : 'bg-blue-500/20 text-blue-400'
-                  }`}
-                >
-                  {feedback.message}
-                </div>
-              )}
-
-              <div className="mt-4">
-                <div className="w-full bg-foreground/10 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full"
-                    style={{ width: `${(currentRiddleIndex + 1) / TOTAL_RIDDLES * 100}%` }}
-                  />
-                </div>
-                <div className="mt-1 text-xs text-foreground/60 text-center">
-                  {TOTAL_RIDDLES - (currentRiddleIndex + 1)} questions remaining
-                </div>
-              </div>
-
-              <div className="flex space-x-2 mt-4">
-                <button
-                  onClick={handleResetGame}
-                  disabled={isResetting}
-                  className="flex-1 px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
-                >
-                  {isResetting ? "Resetting Game..." : "Reset Game"}
-                </button>
-                <button
-                  onClick={handleQuitGame}
-                  disabled={isQuitting}
-                  className="flex-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
-                >
-                  {isQuitting ? "Quitting Game..." : "Quit Game"}
-                </button>
-              </div>
             </>
           )}
+
+          {feedback.message && (
+            <div
+              className={`p-3 rounded-lg my-4 text-center ${
+                feedback.type === 'success'
+                  ? 'bg-green-500/20 text-green-400'
+                  : feedback.type === 'error'
+                  ? 'bg-red-500/20 text-red-400'
+                  : 'bg-blue-500/20 text-blue-400'
+              }`}
+            >
+              {feedback.message}
+            </div>
+          )}
+
+          <div className="mt-4">
+            <div className="w-full bg-foreground/10 rounded-full h-2">
+              <div
+                className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full"
+                style={{ width: `${progress.percentage}%` }}
+              />
+            </div>
+            <div className="mt-1 text-xs text-foreground/60 text-center">
+              {progress.remaining} questions remaining
+            </div>
+          </div>
+
+          {/* Add reset and quit game buttons with consistent styling */}
+          <div className="mt-6 flex justify-center space-x-4">
+            <button
+              onClick={handleResetGame}
+              disabled={isResetting}
+              className="px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
+            >
+              {isResetting ? "Resetting..." : "Reset Game"}
+            </button>
+            
+            <button
+              onClick={handleQuitGame}
+              disabled={isQuitting}
+              className="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+            >
+              {isQuitting ? "Quitting..." : "Quit Game"}
+            </button>
+          </div>
         </div>
       </div>
 
