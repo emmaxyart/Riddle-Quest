@@ -516,7 +516,7 @@ const mediumRiddles = [
     difficulty: "medium",
     points: 20,
     hint: "You do this constantly without thinking",
-    timeLimit: 15
+    timeLimit: 20
   },
   {
     id: 102,
@@ -525,16 +525,16 @@ const mediumRiddles = [
     difficulty: "medium",
     points: 20,
     hint: "Think about walking",
-    timeLimit: 15
+    timeLimit: 20
   },
   {
     id: 103,
-    question: "What has a head, a tail, is brown, and has no legs?",
-    answer: "penny",
+    question: "What asks but never answers?",
+    answer: "owl",
     difficulty: "medium",
     points: 20,
-    hint: "It's a type of currency",
-    timeLimit: 15
+    hint: "A nocturnal bird",
+    timeLimit: 20
   },
   {
     id: 104,
@@ -543,7 +543,7 @@ const mediumRiddles = [
     difficulty: "medium",
     points: 20,
     hint: "Books are kept here",
-    timeLimit: 15
+    timeLimit: 20
   },
   {
     id: 105,
@@ -552,7 +552,7 @@ const mediumRiddles = [
     difficulty: "medium",
     points: 20,
     hint: "It's a natural water feature",
-    timeLimit: 15
+    timeLimit: 20
   },
   {
     id: 106,
@@ -561,16 +561,16 @@ const mediumRiddles = [
     difficulty: "medium",
     points: 20,
     hint: "Think about writing instruments",
-    timeLimit: 15
+    timeLimit: 20
   },
   {
     id: 107,
-    question: "What goes up but never comes down?",
-    answer: "age",
+    question: "What invention lets you look right through a wall?",
+    answer: "window",
     difficulty: "medium",
     points: 20,
-    hint: "Everyone has this and it only increases",
-    timeLimit: 15
+    hint: "Found in every house",
+    timeLimit: 20
   },
   {
     id: 108,
@@ -578,161 +578,296 @@ const mediumRiddles = [
     answer: "stamp",
     difficulty: "medium",
     points: 20,
-    hint: "Used for mail",
-    timeLimit: 15
+    hint: "Used on mail",
+    timeLimit: 20
   },
   {
     id: 109,
-    question: "What has 13 hearts but no other organs?",
-    answer: "deck of cards",
-    difficulty: "medium",
-    points: 20,
-    hint: "Used for games",
-    timeLimit: 15
-  },
-  {
-    id: 110,
-    question: "What has a neck but no head?",
-    answer: "bottle",
-    difficulty: "medium",
-    points: 20,
-    hint: "Used for storing liquids",
-    timeLimit: 15
-  },
-  {
-    id: 111,
-    question: "What gets wetter as it dries?",
-    answer: "towel",
-    difficulty: "medium",
-    points: 20,
-    hint: "Used after bathing",
-    timeLimit: 15
-  },
-  {
-    id: 112,
-    question: "What has words but never speaks?",
-    answer: "book",
-    difficulty: "medium",
-    points: 20,
-    hint: "Contains stories and information",
-    timeLimit: 15
-  },
-  {
-    id: 113,
-    question: "What has a thumb and four fingers but is not alive?",
-    answer: "glove",
-    difficulty: "medium",
-    points: 20,
-    hint: "Worn on hands",
-    timeLimit: 15
-  },
-  {
-    id: 114,
-    question: "What has cities but no houses, forests but no trees, and rivers but no water?",
-    answer: "map",
-    difficulty: "medium",
-    points: 20,
-    hint: "Used for navigation",
-    timeLimit: 15
-  },
-  {
-    id: 115,
-    question: "What can fill a room but takes up no space?",
-    answer: "light",
-    difficulty: "medium",
-    points: 20,
-    hint: "Helps you see",
-    timeLimit: 15
-  },
-  {
-    id: 116,
-    question: "I have keys but no locks. I have space but no room. You can enter, but you can't go inside. What am I?",
-    answer: "keyboard",
-    difficulty: "medium",
-    points: 20,
-    hint: "You use this to type",
-    timeLimit: 15
-  },
-  {
-    id: 117,
-    question: "What has a neck but no head, two arms but no hands?",
-    answer: "shirt",
-    difficulty: "medium",
-    points: 20,
-    hint: "You wear this every day",
-    timeLimit: 15
-  },
-  {
-    id: 118,
-    question: "What gets bigger when more is taken away?",
-    answer: "hole",
-    difficulty: "medium",
-    points: 20,
-    hint: "Think about digging",
-    timeLimit: 15
-  },
-  {
-    id: 119,
-    question: "I'm tall when I'm young, and I'm short when I'm old. What am I?",
-    answer: "candle",
-    difficulty: "medium",
-    points: 20,
-    hint: "I provide light",
-    timeLimit: 15
-  },
-  {
-    id: 120,
-    question: "What has many keys but can't open a single lock?",
-    answer: "piano",
-    difficulty: "medium",
-    points: 20,
-    hint: "It's a musical instrument",
-    timeLimit: 15
-  },
-  {
-    id: 121,
-    question: "What can travel around the world while staying in a corner?",
-    answer: "stamp",
-    difficulty: "medium",
-    points: 20,
-    hint: "Used for mail",
-    timeLimit: 15
-  },
-  {
-    id: 122,
-    question: "What has 13 hearts but no other organs?",
-    answer: "deck of cards",
-    difficulty: "medium",
-    points: 20,
-    hint: "Used for games",
-    timeLimit: 15
-  },
-  {
-    id: 123,
-    question: "What has words but never speaks?",
-    answer: "book",
-    difficulty: "medium",
-    points: 20,
-    hint: "You read it",
-    timeLimit: 15
-  },
-  {
-    id: 124,
-    question: "What runs but never walks, has a mouth but never talks?",
-    answer: "river",
-    difficulty: "medium",
-    points: 20,
-    hint: "Found in nature",
-    timeLimit: 15
-  },
-  {
-    id: 125,
     question: "What can be cracked, made, told, and played?",
     answer: "joke",
     difficulty: "medium",
     points: 20,
     hint: "Makes people laugh",
-    timeLimit: 15
+    timeLimit: 20
+  },
+  {
+    id: 110,
+    question: "What has a ring but no finger?",
+    answer: "telephone",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for communication",
+    timeLimit: 20
+  },
+  {
+    id: 111,
+    question: "What has many keys but can't open a single lock?",
+    answer: "piano",
+    difficulty: "medium",
+    points: 20,
+    hint: "A musical instrument",
+    timeLimit: 20
+  },
+  {
+    id: 112,
+    question: "What gets bigger the more you take away from it?",
+    answer: "hole",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about digging",
+    timeLimit: 20
+  },
+  {
+    id: 113,
+    question: "What has 13 hearts but no other organs?",
+    answer: "deck of cards",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for games",
+    timeLimit: 20
+  },
+  {
+    id: 114,
+    question: "I have branches, but no fruit, trunk or leaves. What am I?",
+    answer: "bank",
+    difficulty: "medium",
+    points: 20,
+    hint: "Related to money",
+    timeLimit: 20
+  },
+  {
+    id: 115,
+    question: "What has a neck but no head?",
+    answer: "bottle",
+    difficulty: "medium",
+    points: 20,
+    hint: "Holds liquids",
+    timeLimit: 20
+  },
+  {
+    id: 116,
+    question: "What room can no one enter?",
+    answer: "mushroom",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about plants",
+    timeLimit: 20
+  },
+  {
+    id: 117,
+    question: "What is full of holes but still holds water?",
+    answer: "sponge",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for cleaning",
+    timeLimit: 20
+  },
+  {
+    id: 118,
+    question: "What has many teeth but cannot bite?",
+    answer: "comb",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for hair",
+    timeLimit: 20
+  },
+  {
+    id: 119,
+    question: "What can you catch but not throw?",
+    answer: "cold",
+    difficulty: "medium",
+    points: 20,
+    hint: "Related to illness",
+    timeLimit: 20
+  },
+  {
+    id: 120,
+    question: "What breaks when you say it?",
+    answer: "silence",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about sound",
+    timeLimit: 20
+  },
+  {
+    id: 121,
+    question: "What goes up and down but doesn't move?",
+    answer: "temperature",
+    difficulty: "medium",
+    points: 20,
+    hint: "Weather related",
+    timeLimit: 20
+  },
+  {
+    id: 122,
+    question: "What can you hold in your right hand but not in your left?",
+    answer: "left hand",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about body parts",
+    timeLimit: 20
+  },
+  {
+    id: 123,
+    question: "What is always in front of you but can't be seen?",
+    answer: "future",
+    difficulty: "medium",
+    points: 20,
+    hint: "Related to time",
+    timeLimit: 20
+  },
+  {
+    id: 124,
+    question: "What can you break, even if you never pick it up or touch it?",
+    answer: "promise",
+    difficulty: "medium",
+    points: 20,
+    hint: "Not a physical object",
+    timeLimit: 20
+  },
+  {
+    id: 125,
+    question: "What goes up but never comes down?",
+    answer: "age",
+    difficulty: "medium",
+    points: 20,
+    hint: "Everyone has it",
+    timeLimit: 20
+  },
+  {
+    id: 126,
+    question: "What can fill a room but takes up no space?",
+    answer: "light",
+    difficulty: "medium",
+    points: 20,
+    hint: "Helps you see",
+    timeLimit: 20
+  },
+  {
+    id: 127,
+    question: "What five-letter word becomes shorter when you add two letters to it?",
+    answer: "short",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about word meanings",
+    timeLimit: 20
+  },
+  {
+    id: 128,
+    question: "What can you keep after giving it to someone?",
+    answer: "word",
+    difficulty: "medium",
+    points: 20,
+    hint: "Related to speaking",
+    timeLimit: 20
+  },
+  {
+    id: 129,
+    question: "What has a bottom at the top?",
+    answer: "legs",
+    difficulty: "medium",
+    points: 20,
+    hint: "Body parts",
+    timeLimit: 20
+  },
+  {
+    id: 130,
+    question: "What has four wheels and flies?",
+    answer: "garbage truck",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about vehicles",
+    timeLimit: 20
+  },
+  {
+    id: 131,
+    question: "What has cities, but no houses; forests, but no trees; and water, but no fish?",
+    answer: "map",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for navigation",
+    timeLimit: 20
+  },
+  {
+    id: 132,
+    question: "What belongs to you, but others use it more than you do?",
+    answer: "name",
+    difficulty: "medium",
+    points: 20,
+    hint: "Personal identifier",
+    timeLimit: 20
+  },
+  {
+    id: 133,
+    question: "The more of this there is, the less you see. What is it?",
+    answer: "darkness",
+    difficulty: "medium",
+    points: 20,
+    hint: "Opposite of light",
+    timeLimit: 20
+  },
+  {
+    id: 134,
+    question: "What has hands but cannot clap?",
+    answer: "clock",
+    difficulty: "medium",
+    points: 20,
+    hint: "Tells time",
+    timeLimit: 20
+  },
+  {
+    id: 135,
+    question: "What can be stolen, mistaken, or broken but never forgotten once given?",
+    answer: "heart",
+    difficulty: "medium",
+    points: 20,
+    hint: "Related to emotions",
+    timeLimit: 20
+  },
+  {
+    id: 136,
+    question: "What starts with an 'e' and ends with an 'e' but only has one letter in it?",
+    answer: "envelope",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for mail",
+    timeLimit: 20
+  },
+  {
+    id: 137,
+    question: "What has a face and two hands but no arms or legs?",
+    answer: "clock",
+    difficulty: "medium",
+    points: 20,
+    hint: "Tells time",
+    timeLimit: 20
+  },
+  {
+    id: 138,
+    question: "What can you hold without touching it?",
+    answer: "conversation",
+    difficulty: "medium",
+    points: 20,
+    hint: "Involves talking",
+    timeLimit: 20
+  },
+  {
+    id: 139,
+    question: "What kind of room has no doors or windows?",
+    answer: "mushroom",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about fungi",
+    timeLimit: 20
+  },
+  {
+    id: 140,
+    question: "What is so fragile that saying its name breaks it?",
+    answer: "silence",
+    difficulty: "medium",
+    points: 20,
+    hint: "Absence of sound",
+    timeLimit: 20
   }
 ];
 
@@ -741,7 +876,8 @@ export async function GET(request: Request) {
   const difficulty = searchParams.get('difficulty');
 
   if (difficulty === 'easy') {
-    // Shuffle the array and return exactly 40 riddles
+    // Shuffle the array and return all available easy riddles
+    // The client will handle deduplication and limiting to exactly 40
     const shuffledRiddles = shuffleArray([...easyRiddles]);
     return NextResponse.json(shuffledRiddles);
   } else if (difficulty === 'medium') {
@@ -755,12 +891,30 @@ export async function GET(request: Request) {
 }
 
 // Helper function to shuffle array
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
+function shuffleArray(array: any[]) {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
   }
-  return shuffled;
+  return newArray;
 }
 
+// Helper function to check for duplicate riddles between difficulty levels
+function ensureNoDuplicates() {
+  const easyQuestions = new Set(easyRiddles.map(r => r.question.toLowerCase().trim()));
+  const mediumQuestions = new Set(mediumRiddles.map(r => r.question.toLowerCase().trim()));
+  
+  // Check for duplicates
+  const duplicates = [...mediumQuestions].filter(q => easyQuestions.has(q));
+  
+  if (duplicates.length > 0) {
+    console.warn(`Found ${duplicates.length} duplicate questions between easy and medium modes`);
+    // In a real app, you might want to log these or handle them
+  }
+  
+  return duplicates.length === 0;
+}
+
+// Run check when module loads
+ensureNoDuplicates();

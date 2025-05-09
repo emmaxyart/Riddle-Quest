@@ -28,6 +28,21 @@ export default function ShareButton({ stats, className = '' }: ShareButtonProps)
     setShowShareMenu(false);
   };
 
+  // Determine color theme based on difficulty
+  const getThemeColors = () => {
+    switch(stats.difficulty) {
+      case 'easy':
+        return 'from-green-500 to-emerald-500';
+      case 'medium':
+        return 'from-yellow-500 to-orange-500';
+      case 'hard':
+        return 'from-red-500 to-rose-500';
+      default:
+        return 'from-purple-500 to-pink-500';
+    }
+  };
+
+  const themeGradient = getThemeColors();
   const shareOptions = [
     { id: 'twitter', label: 'Share on X/Twitter', icon: '𝕏' },
     { id: 'facebook', label: 'Share on Facebook', icon: '📘' },
@@ -39,7 +54,7 @@ export default function ShareButton({ stats, className = '' }: ShareButtonProps)
     <div className={`relative ${className}`}>
       <button
         onClick={() => setShowShareMenu(!showShareMenu)}
-        className="w-full px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg flex items-center justify-center gap-2 transition-colors"
+        className={`w-full px-6 py-3 bg-gradient-to-r ${themeGradient} rounded-lg flex items-center justify-center gap-2 transition-colors`}
         aria-label="Share Score"
       >
         <span className="font-semibold">Share Score</span>
@@ -52,20 +67,18 @@ export default function ShareButton({ stats, className = '' }: ShareButtonProps)
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-50 top-full mt-2 left-0 right-0 bg-foreground/10 backdrop-blur-md rounded-lg border border-foreground/20 p-2 shadow-xl"
+            className="absolute bottom-full left-0 right-0 mb-2 bg-foreground/20 backdrop-blur-md rounded-lg overflow-hidden border border-foreground/20 z-10"
           >
-            <div className="flex flex-col gap-2">
-              {shareOptions.map(({ id, label, icon }) => (
-                <button
-                  key={id}
-                  onClick={() => handleShare(id)}
-                  className="flex items-center gap-2 p-2 hover:bg-foreground/20 rounded-lg transition-colors w-full text-left"
-                >
-                  <span aria-hidden="true">{icon}</span>
-                  <span>{label}</span>
-                </button>
-              ))}
-            </div>
+            {shareOptions.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => handleShare(option.id)}
+                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-foreground/30 transition-colors text-left"
+              >
+                <span className="text-xl" aria-hidden="true">{option.icon}</span>
+                <span>{option.label}</span>
+              </button>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
@@ -73,12 +86,12 @@ export default function ShareButton({ stats, className = '' }: ShareButtonProps)
       <AnimatePresence>
         {feedback && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className={`absolute z-50 top-full mt-2 left-1/2 -translate-x-1/2 ${
-              feedback.type === 'success' ? 'bg-green-500/90' : 'bg-red-500/90'
-            } backdrop-blur-md rounded-lg px-4 py-2 whitespace-nowrap shadow-lg`}
+            exit={{ opacity: 0 }}
+            className={`absolute top-full left-0 right-0 mt-2 p-3 rounded-lg ${
+              feedback.type === 'success' ? 'bg-green-500/20' : 'bg-red-500/20'
+            }`}
           >
             {feedback.message}
           </motion.div>
@@ -87,4 +100,5 @@ export default function ShareButton({ stats, className = '' }: ShareButtonProps)
     </div>
   );
 }
+
 

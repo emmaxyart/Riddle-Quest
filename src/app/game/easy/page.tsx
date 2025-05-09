@@ -56,8 +56,15 @@ export default function EasyMode() {
       const response = await fetch('/api/riddles?difficulty=easy');
       if (!response.ok) throw new Error('Failed to fetch riddles');
       const data = await response.json();
-      // Ensure we only use exactly 40 riddles
-      setRiddles(data.slice(0, TOTAL_RIDDLES));
+      
+      // Shuffle the riddles to ensure randomness
+      const shuffledRiddles = shuffleArray([...data]);
+      
+      // Ensure we only use exactly 40 riddles and no duplicates
+      const uniqueRiddles = removeDuplicateRiddles(shuffledRiddles);
+      
+      // Take only the first TOTAL_RIDDLES
+      setRiddles(uniqueRiddles.slice(0, TOTAL_RIDDLES));
       setTimeRemaining(30);
       setIsLoading(false);
     } catch (error) {
@@ -68,6 +75,34 @@ export default function EasyMode() {
       });
       setIsLoading(false);
     }
+  };
+
+  // Helper function to shuffle array
+  const shuffleArray = (array: any[]) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
+  // Helper function to remove duplicate riddles
+  const removeDuplicateRiddles = (riddles: Riddle[]) => {
+    const uniqueRiddles: Riddle[] = [];
+    const seenQuestions = new Set<string>();
+    
+    for (const riddle of riddles) {
+      // Normalize the question by removing extra spaces and converting to lowercase
+      const normalizedQuestion = riddle.question.toLowerCase().trim();
+      
+      if (!seenQuestions.has(normalizedQuestion)) {
+        seenQuestions.add(normalizedQuestion);
+        uniqueRiddles.push(riddle);
+      }
+    }
+    
+    return uniqueRiddles;
   };
 
   useEffect(() => {

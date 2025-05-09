@@ -36,7 +36,7 @@ export default function MediumMode() {
   const [riddles, setRiddles] = useState<Riddle[]>([]);
   const [currentRiddleIndex, setCurrentRiddleIndex] = useState(0);
   const [answer, setAnswer] = useState('');
-  const [timeRemaining, setTimeRemaining] = useState(15); // Changed from 25 to 15
+  const [timeRemaining, setTimeRemaining] = useState(20); // Changed from 15 to 20 seconds
   const [feedback, setFeedback] = useState<{
     message: string;
     type: 'success' | 'error' | 'info' | null;
@@ -55,7 +55,7 @@ export default function MediumMode() {
       const data = await response.json();
       // Ensure we only use exactly 15 riddles for medium mode
       setRiddles(data.slice(0, TOTAL_RIDDLES));
-      setTimeRemaining(15); // Medium mode now has 15 seconds per riddle
+      setTimeRemaining(20); // Medium mode now has 20 seconds per riddle
       setIsLoading(false);
     } catch (error) {
       console.error('Failed to fetch riddles:', error);
@@ -101,7 +101,7 @@ export default function MediumMode() {
 
   useEffect(() => {
     if (riddles.length > 0 && currentRiddleIndex < riddles.length) {
-      setTimeRemaining(riddles[currentRiddleIndex].timeLimit || 15); // Changed from 25 to 15
+      setTimeRemaining(riddles[currentRiddleIndex].timeLimit || 20); // Changed from 15 to 20
       setStartTime(Date.now());
     }
   }, [currentRiddleIndex, riddles]);
@@ -363,6 +363,8 @@ export default function MediumMode() {
     </div>
   );
 }
+
+
 
 
 
