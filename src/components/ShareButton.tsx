@@ -67,13 +67,13 @@ export default function ShareButton({ stats, className = '' }: ShareButtonProps)
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute bottom-full left-0 right-0 mb-2 bg-foreground/20 backdrop-blur-md rounded-lg overflow-hidden border border-foreground/20 z-10"
+            className="absolute bottom-full left-0 right-0 mb-2 bg-background/90 backdrop-blur-md rounded-lg overflow-hidden border border-foreground/20 z-10 shadow-xl"
           >
             {shareOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => handleShare(option.id)}
-                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-foreground/30 transition-colors text-left"
+                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-foreground/20 transition-colors text-left"
               >
                 <span className="text-xl" aria-hidden="true">{option.icon}</span>
                 <span>{option.label}</span>
@@ -100,5 +100,9 @@ export default function ShareButton({ stats, className = '' }: ShareButtonProps)
     </div>
   );
 }
+
+
+
+
 
 

@@ -1,13 +1,15 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '@/context/GameContext';
-import VolumeControl from '@/components/VolumeControl';
 import LoginForm from '@/components/LoginForm';
+import useIsOnline from '@/hooks/useIsOnline';
+import VolumeControl from '@/components/VolumeControl';
 
-export default function IntroPage() {
+export default function WelcomePage() {
+  const isOnline = useIsOnline();
   const router = useRouter();
   const { toggleMusic, isMusicPlaying } = useGame();
   const [showContent, setShowContent] = useState(false);
@@ -75,8 +77,12 @@ export default function IntroPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-black to-black">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-purple-900/20 to-indigo-900/20 backdrop-blur-sm">
+      {!isOnline && (
+        <div className="fixed top-4 left-0 right-0 mx-auto w-max bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium z-50">
+          You're offline — limited functionality available
+        </div>
+      )}
       
       {/* Audio Controls - Removed Instructions Button */}
       {/* <div className="absolute top-4 right-4 flex items-center gap-4 z-50">

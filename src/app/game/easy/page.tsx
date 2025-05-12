@@ -1,14 +1,15 @@
 'use client';
 
-import { useGame } from '@/context/GameContext';
 import { useState, useEffect, useCallback } from 'react';
-import Loading from '@/components/Loading';
+import { useRouter } from 'next/navigation';
+import { useGame } from '@/context/GameContext';
+import BackButton from '@/components/BackButton';
+import OfflineRedirect from '@/components/OfflineRedirect';
 import { Riddle } from '@/types';
+import GameComplete from '@/components/GameComplete';
 import { generateHint } from '@/utils/hints';
 import { playSound } from '@/utils/sounds';
-import BackButton from '@/components/BackButton';
-import GameComplete from '@/components/GameComplete';
-import { useRouter } from 'next/navigation';
+import Loading from '@/components/Loading';
 
 export default function EasyMode() {
   const router = useRouter();
@@ -48,6 +49,14 @@ export default function EasyMode() {
   const [startTime, setStartTime] = useState<number>(0);
   const [usedHintsThisGame, setUsedHintsThisGame] = useState(false);
 
+  // Add state to track game statistics
+  const [gameStats, setGameStats] = useState({
+    hintsUsed: 0,
+    correctAnswers: 0,
+    timeElapsed: 0,
+    startTime: Date.now()
+  });
+
   const TOTAL_RIDDLES = 40;
 
   const fetchRiddles = async () => {
@@ -77,8 +86,8 @@ export default function EasyMode() {
     }
   };
 
-  // Helper function to shuffle array
-  const shuffleArray = (array: any[]) => {
+  // Helper function to shuffle array - no state updates here
+  const shuffleArray = <T,>(array: T[]): T[] => {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -87,7 +96,7 @@ export default function EasyMode() {
     return newArray;
   };
 
-  // Helper function to remove duplicate riddles
+  // Helper function to remove duplicate riddles - no state updates here
   const removeDuplicateRiddles = (riddles: Riddle[]) => {
     const uniqueRiddles: Riddle[] = [];
     const seenQuestions = new Set<string>();
@@ -117,15 +126,27 @@ export default function EasyMode() {
       setCurrentRiddleIndex(prev => prev + 1);
       setAnswer('');
       setFeedback({ message: '', type: null });
+      setTimeRemaining(30); // Reset timer for next riddle
     } else {
-      // Game is over
+      // Game is over - set index to riddles.length to trigger GameComplete
       setCurrentRiddleIndex(riddles.length);
+      
+      // Calculate final game stats
+      const timeElapsed = Math.floor((Date.now() - gameStats.startTime) / 1000);
+      setGameStats(prev => ({
+        ...prev,
+        timeElapsed
+      }));
+      
       setFeedback({
         message: `Game Over! Final Score: ${gameState.score}`,
         type: 'info'
       });
+      
+      // Call completeGame with the updated stats
+      completeGame(gameStats.hintsUsed > 0);
     }
-  }, [currentRiddleIndex, riddles.length, gameState.score]);
+  }, [currentRiddleIndex, riddles.length, gameState.score, completeGame, gameStats.startTime]);
 
   const handleTimeUp = useCallback(() => {
     setFeedback({
@@ -141,22 +162,19 @@ export default function EasyMode() {
     let timerId: NodeJS.Timeout;
 
     if (!isLoading && riddles.length > 0 && currentRiddleIndex < riddles.length) {
-      const startTimer = () => {
-        setTimeRemaining(riddles[currentRiddleIndex].timeLimit);
-        
-        timerId = setInterval(() => {
-          setTimeRemaining((prev) => {
-            if (prev <= 1) {
-              clearInterval(timerId);
-              handleTimeUp();
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-      };
-
-      startTimer();
+      // Set time remaining once at the beginning of the effect
+      setTimeRemaining(riddles[currentRiddleIndex].timeLimit || 30);
+      
+      timerId = setInterval(() => {
+        setTimeRemaining((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerId);
+            handleTimeUp();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }
 
     return () => {
@@ -182,6 +200,12 @@ export default function EasyMode() {
     if (isCorrect) {
       playSound('success');
       updateScore(currentRiddle.points, timeRemaining, answerTime);
+      
+      // Track correct answer
+      setGameStats(prev => ({
+        ...prev,
+        correctAnswers: prev.correctAnswers + 1
+      }));
      
       setFeedback({
         message: `Correct! +${currentRiddle.points} points`,
@@ -209,9 +233,15 @@ export default function EasyMode() {
 
     if (handleHint()) {
       setUsedHintsThisGame(true);
+      // Track hint usage
+      setGameStats(prev => ({
+        ...prev,
+        hintsUsed: prev.hintsUsed + 1
+      }));
+      
       const generatedHint = generateHint(
-        riddles[currentRiddleIndex].question,
-        riddles[currentRiddleIndex].answer
+        riddles[currentRiddleIndex]?.question || '',
+        riddles[currentRiddleIndex]?.answer || ''
       );
       setFeedback({
         message: generatedHint,
@@ -231,6 +261,7 @@ export default function EasyMode() {
     setCurrentRiddleIndex(0);
     setAnswer('');
     setFeedback({ message: '', type: null });
+    setUsedHintsThisGame(false); // Reset hints used flag
     fetchRiddles().finally(() => {
       setIsResetting(false);
     });
@@ -244,28 +275,24 @@ export default function EasyMode() {
     };
   };
 
-  const calculateAchievements = (): string[] => {
+  const calculateAchievements = () => {
+    if (!user) return [];
+    
     const achievements: string[] = [];
     
-    // Perfect Score Achievement
-    if (gameState.score === TOTAL_RIDDLES * 10) {
+    // Calculate achievements based on game performance
+    if (gameState.score >= TOTAL_RIDDLES * 10) {
       achievements.push('Perfect Score');
     }
     
-    // Speed Demon Achievement (average answer time less than 15 seconds)
-    if (gameState.timeElapsed && gameState.correctAnswers) {
-      const averageTime = gameState.timeElapsed / gameState.correctAnswers;
-      if (averageTime < 15) {
-        achievements.push('Speed Demon');
-      }
+    if (gameState.score >= 300) {
+      achievements.push('High Scorer');
     }
     
-    // No Hints Achievement
-    if (gameState.hintsUsed === 0) {
+    if (!usedHintsThisGame) {
       achievements.push('No Hints Used');
     }
     
-    // First Win Achievement
     if (user?.totalGames === 1) {
       achievements.push('First Win');
     }
@@ -275,11 +302,15 @@ export default function EasyMode() {
       achievements.push('Streak Master');
     }
     
+    // Log achievements for debugging
+    console.log('Calculated achievements:', achievements);
+    
     return achievements;
   };
 
   useEffect(() => {
-    if (currentRiddleIndex === riddles.length) {
+    if (currentRiddleIndex === riddles.length && riddles.length > 0) {
+      // Call completeGame once when the game is finished
       completeGame(usedHintsThisGame);
     }
   }, [currentRiddleIndex, riddles.length, usedHintsThisGame, completeGame]);
@@ -294,134 +325,169 @@ export default function EasyMode() {
 
   const progress = calculateProgress();
 
-  return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-green-900/20 to-emerald-900/20">
-      <BackButton />
-      <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
-        <div className="w-full max-w-md backdrop-blur-md bg-foreground/10 rounded-2xl border border-foreground/20 p-8 shadow-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
-              Easy Mode
-            </h1>
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-sm text-foreground/70">
-                Score: <span className="font-bold text-green-400">{gameState.score}</span>
-              </div>
-              <div className="text-sm text-foreground/70">
-                Time: <span className={`font-bold ${timeRemaining < 10 ? 'text-red-400' : 'text-green-400'}`}>{timeRemaining}s</span>
-              </div>
-            </div>
-          </div>
-
-          {currentRiddleIndex < TOTAL_RIDDLES && riddles[currentRiddleIndex] && (
-            <>
-              <div className="p-4 rounded-xl bg-foreground/20 backdrop-blur-sm mb-4">
-                <h2 className="text-lg font-semibold mb-2">Riddle #{currentRiddleIndex + 1}</h2>
-                <p className="text-foreground/90">{riddles[currentRiddleIndex].question}</p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <input
-                    type="text"
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    placeholder="Your answer..."
-                    className="w-full p-3 rounded-lg bg-foreground/10 border border-foreground/20 focus:outline-none focus:ring-2 focus:ring-green-500/50"
-                    onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer()}
-                  />
-                </div>
-
-                <div className="flex space-x-2">
-                  <button
-                    onClick={handleSubmitAnswer}
-                    className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold hover:opacity-90 transition-opacity"
-                  >
-                    Submit
-                  </button>
-                  <button
-                    onClick={handleShowHint}
-                    disabled={!user?.hintsRemaining}
-                    className={`px-4 py-2 rounded-lg border ${
-                      user?.hintsRemaining
-                        ? 'border-green-500/50 text-green-400 hover:bg-green-500/10'
-                        : 'border-foreground/20 text-foreground/40'
-                    } transition-colors`}
-                  >
-                    Hint ({user?.hintsRemaining || 0})
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-
-          {feedback.message && (
-            <div
-              className={`p-3 rounded-lg my-4 text-center ${
-                feedback.type === 'success'
-                  ? 'bg-green-500/20 text-green-400'
-                  : feedback.type === 'error'
-                  ? 'bg-red-500/20 text-red-400'
-                  : 'bg-blue-500/20 text-blue-400'
-              }`}
-            >
-              {feedback.message}
-            </div>
-          )}
-
-          <div className="mt-4">
-            <div className="w-full bg-foreground/10 rounded-full h-2">
-              <div
-                className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full"
-                style={{ width: `${progress.percentage}%` }}
-              />
-            </div>
-            <div className="mt-1 text-xs text-foreground/60 text-center">
-              {progress.remaining} questions remaining
-            </div>
-          </div>
-
-          {/* Add reset and quit game buttons with consistent styling */}
-          <div className="mt-6 flex justify-center space-x-4">
-            <button
-              onClick={handleResetGame}
-              disabled={isResetting}
-              className="px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
-            >
-              {isResetting ? "Resetting..." : "Reset Game"}
-            </button>
-            
-            <button
-              onClick={handleQuitGame}
-              disabled={isQuitting}
-              className="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
-            >
-              {isQuitting ? "Quitting..." : "Quit Game"}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Game Over Screen */}
-      {currentRiddleIndex >= TOTAL_RIDDLES && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-2xl bg-gradient-to-br from-green-900/90 to-emerald-900/90 rounded-2xl border border-foreground/20 p-6 sm:p-8 shadow-2xl">
+  // Game is complete
+  if (currentRiddleIndex >= riddles.length && riddles.length > 0) {
+    // Calculate achievements based on game performance
+    const achievements = calculateAchievements();
+    
+    // Calculate final game stats
+    const timeElapsed = Math.floor((Date.now() - gameStats.startTime) / 1000);
+    const correctAnswers = gameStats.correctAnswers;
+    const averageTime = correctAnswers > 0 ? (timeElapsed / correctAnswers).toFixed(1) : "N/A";
+    
+    return (
+      <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-green-900/20 to-emerald-900/20">
+        <BackButton />
+        <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
+          <div className="w-full max-w-md backdrop-blur-md bg-foreground/10 rounded-2xl border border-foreground/20 p-8 shadow-2xl">
             <GameComplete 
               stats={{
                 score: gameState.score,
+                correctAnswers: correctAnswers,
                 totalRiddles: TOTAL_RIDDLES,
-                difficulty: 'easy',
-                achievements: calculateAchievements(),
-                timeElapsed: gameState.timeElapsed,
-                correctAnswers: gameState.correctAnswers,
-                hintsUsed: gameState.hintsUsed
+                timeElapsed: timeElapsed,
+                hintsUsed: gameStats.hintsUsed,
+                achievements: achievements,
+                difficulty: "easy"
               }}
               onPlayAgain={handleResetGame}
             />
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  return (
+    <OfflineRedirect>
+      <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-green-900/20 to-emerald-900/20">
+        <BackButton />
+        <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
+          <div className="w-full max-w-md backdrop-blur-md bg-foreground/10 rounded-2xl border border-foreground/20 p-8 shadow-2xl">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Easy Mode
+              </h1>
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-sm text-foreground/70">
+                  Score: <span className="font-bold text-green-400">{gameState.score}</span>
+                </div>
+                <div className="text-sm text-foreground/70">
+                  Time: <span className={`font-bold ${timeRemaining < 10 ? 'text-red-400' : 'text-green-400'}`}>{timeRemaining}s</span>
+                </div>
+              </div>
+            </div>
+
+            {currentRiddleIndex < TOTAL_RIDDLES && riddles[currentRiddleIndex] && (
+              <>
+                <div className="p-4 rounded-xl bg-foreground/20 backdrop-blur-sm mb-4">
+                  <h2 className="text-lg font-semibold mb-2">Riddle #{currentRiddleIndex + 1}</h2>
+                  <p className="text-foreground/90">{riddles[currentRiddleIndex].question}</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <input
+                      type="text"
+                      value={answer}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      placeholder="Your answer..."
+                      className="w-full p-3 rounded-lg bg-foreground/10 border border-foreground/20 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                      onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer()}
+                    />
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleSubmitAnswer}
+                      className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold hover:opacity-90 transition-opacity"
+                    >
+                      Submit
+                    </button>
+                    <button
+                      onClick={handleShowHint}
+                      disabled={!user?.hintsRemaining}
+                      className={`px-4 py-2 rounded-lg border ${
+                        user?.hintsRemaining
+                          ? 'border-green-500/50 text-green-400 hover:bg-green-500/10'
+                          : 'border-foreground/20 text-foreground/40'
+                      } transition-colors`}
+                    >
+                      Hint ({user?.hintsRemaining || 0})
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {feedback.message && (
+              <div
+                className={`p-3 rounded-lg my-4 text-center ${
+                  feedback.type === 'success'
+                    ? 'bg-green-500/20 text-green-400'
+                    : feedback.type === 'error'
+                    ? 'bg-red-500/20 text-red-400'
+                    : 'bg-blue-500/20 text-blue-400'
+                }`}
+              >
+                {feedback.message}
+              </div>
+            )}
+
+            <div className="mt-4">
+              <div className="w-full bg-foreground/10 rounded-full h-2">
+                <div
+                  className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full"
+                  style={{ width: `${progress.percentage}%` }}
+                />
+              </div>
+              <div className="mt-1 text-xs text-foreground/60 text-center">
+                {progress.remaining} questions remaining
+              </div>
+            </div>
+
+            {/* Add reset and quit game buttons with consistent styling */}
+            <div className="mt-6 flex justify-center space-x-4">
+              <button
+                onClick={handleResetGame}
+                disabled={isResetting}
+                className="px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
+              >
+                {isResetting ? "Resetting..." : "Reset Game"}
+              </button>
+              
+              <button
+                onClick={handleQuitGame}
+                disabled={isQuitting}
+                className="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+              >
+                {isQuitting ? "Quitting..." : "Quit Game"}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Game Over Screen */}
+        {currentRiddleIndex >= riddles.length && riddles.length > 0 && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="w-full max-w-2xl bg-gradient-to-br from-green-900/90 to-emerald-900/90 rounded-2xl border border-foreground/20 p-6 sm:p-8 shadow-2xl">
+              <GameComplete 
+                stats={{
+                  score: gameState.score,
+                  totalRiddles: TOTAL_RIDDLES,
+                  difficulty: 'easy',
+                  achievements: calculateAchievements(),
+                  timeElapsed: gameState.timeElapsed || 0,
+                  correctAnswers: gameState.correctAnswers || 0,
+                  hintsUsed: gameState.hintsUsed || 0
+                }}
+                onPlayAgain={handleResetGame}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </OfflineRedirect>
   );
 }
 

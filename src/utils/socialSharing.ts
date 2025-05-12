@@ -1,4 +1,5 @@
 import { GameStats } from '@/types';
+import { socialConfig } from '@/config/social';
 
 export async function shareToSocial(
   platform: 'twitter' | 'facebook' | 'whatsapp' | 'clipboard',
@@ -17,7 +18,7 @@ export async function shareToSocial(
     `⏱️ Average Time: ${(stats.timeElapsed / stats.correctAnswers).toFixed(1)}s\n` +
     `💭 Hints Used: ${stats.hintsUsed}\n` +
     (stats.achievements.length > 0 ? `\n🏆 Achievements Unlocked:\n${stats.achievements.map(a => `• ${a}`).join('\n')}\n` : '') +
-    `\n🎯 Think you can beat my score? Try now at`;
+    `\n🎯 Think you can beat my score? Try now at ${socialConfig.baseUrl}`;
 
   const encodedMessage = encodeURIComponent(baseMessage);
   const url = encodeURIComponent(window.location.origin);
@@ -48,6 +49,8 @@ export async function shareToSocial(
     return { success: false, message: 'Failed to share' };
   }
 }
+
+
 
 
 

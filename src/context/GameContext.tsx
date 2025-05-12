@@ -154,7 +154,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       let hintsCount = 15; // Default for easy mode
       
       if (gameMode === 'medium') {
-        hintsCount = 13; // Reduced hints for medium mode
+        hintsCount = 10; // Reduced hints for medium mode from 13 to 10
       } else if (gameMode === 'hard') {
         hintsCount = 10; // Even fewer hints for hard mode
       }
@@ -259,8 +259,14 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const completeGame = (usedHints: boolean) => {
     if (!user) return;
 
-    const TOTAL_RIDDLES = 40;
-    const isPerfectGame = gameState.score === TOTAL_RIDDLES * 10; // Assuming 10 points per riddle
+    const TOTAL_RIDDLES = gameState.gameMode === 'easy' ? 40 : gameState.gameMode === 'medium' ? 15 : 10;
+    const isPerfectGame = gameState.score === TOTAL_RIDDLES * (gameState.gameMode === 'easy' ? 10 : gameState.gameMode === 'medium' ? 20 : 30);
+    
+    // Update game state with statistics - fix the error by using a direct setState call
+    setGameState({
+      ...gameState,
+      hintsUsed: gameState.hintsUsed + (usedHints ? 1 : 0)
+    });
     
     const updatedUser = {
       ...user,

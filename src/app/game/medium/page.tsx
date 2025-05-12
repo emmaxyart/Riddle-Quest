@@ -1,14 +1,16 @@
 'use client';
 
-import { useGame } from '@/context/GameContext';
 import { useState, useEffect, useCallback } from 'react';
-import Loading from '@/components/Loading';
+import { useRouter } from 'next/navigation';
+import { useGame } from '@/context/GameContext';
 import { Riddle } from '@/types';
-import { generateHint } from '@/utils/hints';
-import { playSound } from '@/utils/sounds';
 import BackButton from '@/components/BackButton';
 import GameComplete from '@/components/GameComplete';
-import { useRouter } from 'next/navigation';
+import { generateHint } from '@/utils/hints';
+import { playSound } from '@/utils/sounds';
+import Loading from '@/components/Loading';
+import ShareButton from '@/components/ShareButton';
+import OfflineRedirect from '@/components/OfflineRedirect';
 
 export default function MediumMode() {
   const router = useRouter();
@@ -45,7 +47,15 @@ export default function MediumMode() {
   const [isResetting, setIsResetting] = useState(false);
   const [isQuitting, setIsQuitting] = useState(false);
 
-  const TOTAL_RIDDLES = 15;
+  const TOTAL_RIDDLES = 30;
+
+  // Add state to track game statistics
+  const [gameStats, setGameStats] = useState({
+    hintsUsed: 0,
+    correctAnswers: 0,
+    timeElapsed: 0,
+    startTime: Date.now()
+  });
 
   const fetchRiddles = async () => {
     try {
@@ -81,12 +91,20 @@ export default function MediumMode() {
     } else {
       // Game is over
       setCurrentRiddleIndex(riddles.length);
+      
+      // Calculate final game stats
+      const timeElapsed = Math.floor((Date.now() - gameStats.startTime) / 1000);
+      setGameStats(prev => ({
+        ...prev,
+        timeElapsed
+      }));
+      
       setFeedback({
         message: `Game Over! Final Score: ${gameState.score}`,
         type: 'info'
       });
     }
-  }, [currentRiddleIndex, riddles.length, gameState.score]);
+  }, [currentRiddleIndex, riddles.length, gameState.score, gameStats.startTime, gameStats.hintsUsed]);
 
   const handleTimeUp = useCallback(() => {
     setFeedback({
@@ -139,6 +157,12 @@ export default function MediumMode() {
     if (isCorrect) {
       playSound('success');
       updateScore(currentRiddle.points, timeRemaining, answerTime);
+      
+      // Track correct answer
+      setGameStats(prev => ({
+        ...prev,
+        correctAnswers: prev.correctAnswers + 1
+      }));
      
       setFeedback({
         message: `Correct! +${currentRiddle.points} points`,
@@ -168,6 +192,12 @@ export default function MediumMode() {
     }
 
     if (handleHint()) {
+      // Track hint usage
+      setGameStats(prev => ({
+        ...prev,
+        hintsUsed: prev.hintsUsed + 1
+      }));
+      
       const generatedHint = generateHint(
         riddles[currentRiddleIndex].question,
         riddles[currentRiddleIndex].answer
@@ -224,25 +254,38 @@ export default function MediumMode() {
     return achievements;
   };
 
+  // Add this useEffect at the top level of the component, outside any conditional blocks
+  useEffect(() => {
+    if (currentRiddleIndex === riddles.length && riddles.length > 0) {
+      // Call completeGame once when the game is finished
+      completeGame(gameStats.hintsUsed > 0);
+    }
+  }, [currentRiddleIndex, riddles.length, gameStats.hintsUsed, completeGame]);
+
   // Game is complete
   if (currentRiddleIndex >= riddles.length && riddles.length > 0) {
     const achievements = calculateAchievements();
-    // Pass a boolean based on gameState.hintsUsed instead of usedHintsThisGame
-    completeGame(gameState.hintsUsed > 0);
     
     return (
-      <GameComplete 
-        stats={{
-          score: gameState.score,
-          correctAnswers: gameState.correctAnswers,
-          totalRiddles: TOTAL_RIDDLES,
-          timeElapsed: gameState.timeElapsed,
-          hintsUsed: gameState.hintsUsed,
-          achievements: achievements,
-          difficulty: "medium"
-        }}
-        onPlayAgain={handleResetGame}
-      />
+      <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-yellow-900/20 to-amber-900/20">
+        <BackButton />
+        <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
+          <div className="w-full max-w-md backdrop-blur-md bg-foreground/10 rounded-2xl border border-foreground/20 p-8 shadow-2xl">
+            <GameComplete 
+              stats={{
+                score: gameState.score,
+                correctAnswers: gameStats.correctAnswers,
+                totalRiddles: TOTAL_RIDDLES,
+                timeElapsed: gameStats.timeElapsed,
+                hintsUsed: gameStats.hintsUsed,
+                achievements: achievements,
+                difficulty: "medium"
+              }}
+              onPlayAgain={handleResetGame}
+            />
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -250,7 +293,6 @@ export default function MediumMode() {
     return <Loading />;
   }
 
-  const currentRiddle = riddles[currentRiddleIndex];
   const progress = {
     current: currentRiddleIndex + 1,
     total: riddles.length,
@@ -258,109 +300,111 @@ export default function MediumMode() {
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-yellow-900/20 to-amber-900/20">
-      <BackButton />
-      <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
-        <div className="w-full max-w-md backdrop-blur-md bg-foreground/10 rounded-2xl border border-foreground/20 p-8 shadow-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
-              Medium Mode
-            </h1>
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-sm text-foreground/70">
-                Score: <span className="font-bold text-yellow-400">{gameState.score}</span>
-              </div>
-              <div className="text-sm text-foreground/70">
-                Time: <span className={`font-bold ${timeRemaining < 5 ? 'text-red-400' : 'text-yellow-400'}`}>{timeRemaining}s</span>
+    <OfflineRedirect>
+      <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-br from-yellow-900/20 to-amber-900/20">
+        <BackButton />
+        <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
+          <div className="w-full max-w-md backdrop-blur-md bg-foreground/10 rounded-2xl border border-foreground/20 p-8 shadow-2xl">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+                Medium Mode
+              </h1>
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-sm text-foreground/70">
+                  Score: <span className="font-bold text-yellow-400">{gameState.score}</span>
+                </div>
+                <div className="text-sm text-foreground/70">
+                  Time: <span className={`font-bold ${timeRemaining < 5 ? 'text-red-400' : 'text-yellow-400'}`}>{timeRemaining}s</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="mb-6">
-            <div className="p-4 rounded-xl bg-foreground/20 backdrop-blur-sm mb-4">
-              <h2 className="text-lg font-semibold mb-2">Riddle #{progress.current}</h2>
-              <p className="text-foreground/90">{currentRiddle?.question}</p>
+            <div className="mb-6">
+              <div className="p-4 rounded-xl bg-foreground/20 backdrop-blur-sm mb-4">
+                <h2 className="text-lg font-semibold mb-2">Riddle #{progress.current}</h2>
+                <p className="text-foreground/90">{riddles[currentRiddleIndex]?.question}</p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <input
+                    type="text"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    placeholder="Your answer..."
+                    className="w-full p-3 rounded-lg bg-foreground/10 border border-foreground/20 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                    onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer()}
+                  />
+                </div>
+
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleSubmitAnswer}
+                    className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-semibold hover:opacity-90 transition-opacity"
+                  >
+                    Submit
+                  </button>
+                  <button
+                    onClick={handleShowHint}
+                    disabled={!user?.hintsRemaining}
+                    className={`px-4 py-2 rounded-lg border ${
+                      user?.hintsRemaining
+                        ? 'border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10'
+                        : 'border-foreground/20 text-foreground/40'
+                    } transition-colors`}
+                  >
+                    Hint ({user?.hintsRemaining || 0})
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  placeholder="Your answer..."
-                  className="w-full p-3 rounded-lg bg-foreground/10 border border-foreground/20 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
-                  onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer()}
+            {feedback.message && (
+              <div
+                className={`p-3 rounded-lg mb-4 text-center ${
+                  feedback.type === 'success'
+                    ? 'bg-green-500/20 text-green-400'
+                    : feedback.type === 'error'
+                    ? 'bg-red-500/20 text-red-400'
+                    : 'bg-blue-500/20 text-blue-400'
+                }`}
+              >
+                {feedback.message}
+              </div>
+            )}
+
+            <div className="mt-4">
+              <div className="w-full bg-foreground/10 rounded-full h-2">
+                <div
+                  className="bg-gradient-to-r from-yellow-400 to-amber-500 h-2 rounded-full"
+                  style={{ width: `${(progress.current / progress.total) * 100}%` }}
                 />
               </div>
-
-              <div className="flex space-x-2">
-                <button
-                  onClick={handleSubmitAnswer}
-                  className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-semibold hover:opacity-90 transition-opacity"
-                >
-                  Submit
-                </button>
-                <button
-                  onClick={handleShowHint}
-                  disabled={!user?.hintsRemaining}
-                  className={`px-4 py-2 rounded-lg border ${
-                    user?.hintsRemaining
-                      ? 'border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10'
-                      : 'border-foreground/20 text-foreground/40'
-                  } transition-colors`}
-                >
-                  Hint ({user?.hintsRemaining || 0})
-                </button>
+              <div className="mt-1 text-xs text-foreground/60 text-center">
+                {progress.remaining} questions remaining
               </div>
             </div>
-          </div>
 
-          {feedback.message && (
-            <div
-              className={`p-3 rounded-lg mb-4 text-center ${
-                feedback.type === 'success'
-                  ? 'bg-green-500/20 text-green-400'
-                  : feedback.type === 'error'
-                  ? 'bg-red-500/20 text-red-400'
-                  : 'bg-blue-500/20 text-blue-400'
-              }`}
-            >
-              {feedback.message}
+            <div className="flex space-x-2 mt-4">
+              <button
+                onClick={handleResetGame}
+                disabled={isResetting}
+                className="flex-1 px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 transition-colors"
+              >
+                {isResetting ? "Resetting Game..." : "Reset Game"}
+              </button>
+              <button
+                onClick={handleQuitGame}
+                disabled={isQuitting}
+                className="flex-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+              >
+                {isQuitting ? "Quitting Game..." : "Quit Game"}
+              </button>
             </div>
-          )}
-
-          <div className="mt-4">
-            <div className="w-full bg-foreground/10 rounded-full h-2">
-              <div
-                className="bg-gradient-to-r from-yellow-400 to-amber-500 h-2 rounded-full"
-                style={{ width: `${(progress.current / progress.total) * 100}%` }}
-              />
-            </div>
-            <div className="mt-1 text-xs text-foreground/60 text-center">
-              {progress.remaining} questions remaining
-            </div>
-          </div>
-
-          <div className="flex space-x-2 mt-4">
-            <button
-              onClick={handleResetGame}
-              disabled={isResetting}
-              className="flex-1 px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 transition-colors"
-            >
-              {isResetting ? "Resetting Game..." : "Reset Game"}
-            </button>
-            <button
-              onClick={handleQuitGame}
-              disabled={isQuitting}
-              className="flex-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
-            >
-              {isQuitting ? "Quitting Game..." : "Quit Game"}
-            </button>
           </div>
         </div>
       </div>
-    </div>
+    </OfflineRedirect>
   );
 }
 

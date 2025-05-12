@@ -32,7 +32,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-black to-black">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
       
       <motion.div 
         className="relative min-h-screen flex flex-col items-center justify-center p-4"
@@ -55,7 +54,7 @@ export default function LoginPage() {
 
           <motion.div
             variants={itemVariants}
-            className="backdrop-blur-md bg-foreground/10 rounded-2xl border border-foreground/20 p-8 shadow-2xl"
+            className="bg-gray-800 rounded-2xl border border-gray-700 p-8 shadow-2xl"
           >
             <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent text-center">
               Welcome Back
