@@ -174,11 +174,12 @@ export default function MediumMode() {
       playSound('failure');
      
       setFeedback({
-        message: 'Incorrect. Moving to next riddle...',
+        message: 'Incorrect. Try again!',
         type: 'error'
       });
-      // Move to next question after 1.5 seconds for incorrect answers
-      setTimeout(moveToNextRiddle, 1500);
+      // Clear the answer field to let them try again
+      setAnswer('');
+      // Don't automatically move to next riddle
     }
   };
 

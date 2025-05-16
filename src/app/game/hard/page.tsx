@@ -121,9 +121,14 @@ export default function HardMode() {
     }
   }, [currentRiddleIndex, riddles.length, gameState.score, gameStats.startTime]);
 
-  const handleSubmitAnswer = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!answer.trim()) return;
+  const handleSubmitAnswer = () => {
+    if (!answer.trim()) {
+      setFeedback({
+        message: 'Please enter an answer',
+        type: 'error'
+      });
+      return;
+    }
 
     const currentRiddle = riddles[currentRiddleIndex];
     const isCorrect = answer.toLowerCase().trim() === currentRiddle.answer.toLowerCase();
@@ -148,11 +153,12 @@ export default function HardMode() {
       playSound('failure');
      
       setFeedback({
-        message: 'Incorrect. Moving to next riddle...',
+        message: 'Incorrect. Try again!',
         type: 'error'
       });
-      // Move to next question after 1.5 seconds for incorrect answers
-      setTimeout(moveToNextRiddle, 1500);
+      // Clear the answer field to let them try again
+      setAnswer('');
+      // Don't automatically move to next riddle
     }
   };
 
@@ -304,7 +310,7 @@ export default function HardMode() {
                       onChange={(e) => setAnswer(e.target.value)}
                       placeholder="Your answer..."
                       className="w-full p-3 rounded-lg bg-foreground/10 border border-foreground/20 focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                      onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer(e)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer()}
                     />
                   </div>
 
