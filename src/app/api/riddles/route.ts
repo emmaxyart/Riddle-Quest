@@ -362,147 +362,147 @@ const easyRiddles = [
     timeLimit: 30
   },
   {
-    id: 25,
-    question: "I'm tall when I'm young, and short when I'm old. What am I?",
-    answer: "candle",
+    id: 41,
+    question: "A girl has as many brothers as sisters, but each brother has only half as many brothers as sisters. How many brothers and sisters are there in the family?",
+    answer: "four sisters and three brothers",
     difficulty: "easy",
     points: 10,
-    hint: "I provide light",
+    hint: "Count the siblings carefully",
     timeLimit: 30
   },
   {
-    id: 26,
-    question: "What has keys that open no doors, space but no room, and you can enter but not go in?",
-    answer: "keyboard",
+    id: 42,
+    question: "Two girls were born to the same mother, on the same day, at the same time, in the same month, and in the same year—but they're not twins. How is this possible?",
+    answer: "triplets",
     difficulty: "easy",
     points: 10,
-    hint: "Used with computers",
+    hint: "There are more than two siblings",
     timeLimit: 30
   },
   {
-    id: 27,
-    question: "What gets broken without being held?",
-    answer: "promise",
+    id: 43,
+    question: "A barrel of water weighed 60 pounds. Someone put something in it, and now it weighs 40 pounds. What did the person add?",
+    answer: "hole",
     difficulty: "easy",
     points: 10,
-    hint: "It's not physical",
+    hint: "Something that lets water out",
     timeLimit: 30
   },
   {
-    id: 28,
-    question: "What can run but never walks, has a mouth but never talks?",
-    answer: "river",
+    id: 44,
+    question: "I am an odd number. Take away a letter, and I become even. What number am I?",
+    answer: "seven",
     difficulty: "easy",
     points: 10,
-    hint: "Found in nature",
+    hint: "Remove the 's'",
     timeLimit: 30
   },
   {
-    id: 29,
-    question: "What has a head and a tail that will never meet?",
-    answer: "coin",
+    id: 45,
+    question: "TEN = 20, 5, 14. MEN = 13, 5, 14. Using the same logic, what do WOMEN equal?",
+    answer: "23, 15, 13, 5, 14",
     difficulty: "easy",
     points: 10,
-    hint: "Used as currency",
+    hint: "Think about the alphabet position",
     timeLimit: 30
   },
   {
-    id: 30,
-    question: "What has cities, but no houses; forests, but no trees; and rivers, but no water?",
-    answer: "map",
+    id: 46,
+    question: "What would a math teacher be doing with a piece of graph paper?",
+    answer: "plotting something",
     difficulty: "easy",
     points: 10,
-    hint: "Used for navigation",
+    hint: "Think about math terms",
     timeLimit: 30
   },
   {
-    id: 31,
-    question: "What is always in front of you but can't be seen?",
-    answer: "future",
+    id: 47,
+    question: "How do eight eights add up to one thousand?",
+    answer: "888 + 88 + 8 + 8 + 8 = 1000",
     difficulty: "easy",
     points: 10,
-    hint: "Time related",
+    hint: "Use different combinations of 8s",
     timeLimit: 30
   },
   {
-    id: 32,
-    question: "What can fill a room but takes up no space?",
-    answer: "light",
+    id: 48,
+    question: "Mr. Taylor has four daughters and each has a brother. In total, how many children does Mr. Taylor have?",
+    answer: "five",
     difficulty: "easy",
     points: 10,
-    hint: "Helps you see",
+    hint: "They all share the same brother",
     timeLimit: 30
   },
   {
-    id: 33,
-    question: "What goes up but never comes down?",
-    answer: "age",
+    id: 49,
+    question: "If an electric train is moving north at 55 mph and the winds blowing east at 70 mph, which way does the smoke blow?",
+    answer: "electric trains don't emit smoke",
     difficulty: "easy",
     points: 10,
-    hint: "Everyone has it",
+    hint: "Think about the type of train",
     timeLimit: 30
   },
   {
-    id: 34,
-    question: "What can be cracked, made, told, and played?",
-    answer: "joke",
+    id: 50,
+    question: "What is 3/7 chicken, 2/3 cat, and 1/2 goat?",
+    answer: "chicago",
     difficulty: "easy",
     points: 10,
-    hint: "Makes people laugh",
+    hint: "Combine the letters",
     timeLimit: 30
   },
   {
-    id: 35,
-    question: "What has words, but never speaks?",
-    answer: "book",
+    id: 51,
+    question: "I belong in December, but not in any other month. I am not a holiday. What am I?",
+    answer: "d",
     difficulty: "easy",
     points: 10,
-    hint: "Found in libraries",
+    hint: "It's a letter in the word",
     timeLimit: 30
   },
   {
-    id: 36,
-    question: "What runs all around a backyard, yet never moves?",
-    answer: "fence",
+    id: 52,
+    question: "White bird, featherless. Flying out of paradise. Flying over sea and land. Dying in my hand. What is it?",
+    answer: "snowflake",
     difficulty: "easy",
     points: 10,
-    hint: "Marks boundaries",
+    hint: "It falls from the sky",
     timeLimit: 30
   },
   {
-    id: 37,
-    question: "What can travel around the world while staying in a corner?",
-    answer: "stamp",
+    id: 53,
+    question: "What 5-letter word, if typed in all capital letters, can be read the same upside down?",
+    answer: "swims",
     difficulty: "easy",
     points: 10,
-    hint: "Used on mail",
+    hint: "Related to water activity",
     timeLimit: 30
   },
   {
-    id: 38,
-    question: "What has many teeth but cannot bite?",
-    answer: "comb",
+    id: 54,
+    question: "How do you spell COW in thirteen letters?",
+    answer: "see o double you",
     difficulty: "easy",
     points: 10,
-    hint: "Used for grooming",
+    hint: "Spell out the letters",
     timeLimit: 30
   },
   {
-    id: 39,
-    question: "What has banks but no money?",
-    answer: "river",
+    id: 55,
+    question: "I'm everywhere and a part of everyone. I am at the end of space and time and existence itself. What am I?",
+    answer: "e",
     difficulty: "easy",
     points: 10,
-    hint: "Flows with water",
+    hint: "It's a letter",
     timeLimit: 30
   },
   {
-    id: 40,
-    question: "What can be thrown but not caught?",
-    answer: "party",
+    id: 56,
+    question: "What is seen in the middle of March and April that can't be seen at the beginning or end of either month?",
+    answer: "r",
     difficulty: "easy",
     points: 10,
-    hint: "A celebration",
+    hint: "Look at the spelling",
     timeLimit: 30
   }
 ];
@@ -1048,6 +1048,186 @@ const mediumRiddles = [
     points: 20,
     hint: "Always moving forward",
     timeLimit: 20
+  },
+  {
+    id: 161,
+    question: "I have only two words but thousands of letters. What am I?",
+    answer: "post office",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about mail delivery",
+    timeLimit: 20
+  },
+  {
+    id: 162,
+    question: "What can travel all around the world while remaining stuck in a corner?",
+    answer: "stamp",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used on envelopes",
+    timeLimit: 20
+  },
+  {
+    id: 163,
+    question: "What can you hold in your right hand but never in your left?",
+    answer: "your left hand",
+    difficulty: "medium",
+    points: 20,
+    hint: "It's a part of your body",
+    timeLimit: 20
+  },
+  {
+    id: 164,
+    question: "What has many teeth but cannot bite?",
+    answer: "comb",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for hair",
+    timeLimit: 20
+  },
+  {
+    id: 165,
+    question: "You go at red and stop at green. What am I?",
+    answer: "watermelon",
+    difficulty: "medium",
+    points: 20,
+    hint: "It's a fruit",
+    timeLimit: 20
+  },
+  {
+    id: 166,
+    question: "How much dirt is in a hole that measures four feet by four feet by five feet?",
+    answer: "none",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about what a hole is",
+    timeLimit: 20
+  },
+  {
+    id: 167,
+    question: "What can you fill with empty hands?",
+    answer: "gloves",
+    difficulty: "medium",
+    points: 20,
+    hint: "Worn on hands",
+    timeLimit: 20
+  },
+  {
+    id: 168,
+    question: "What disappears the moment you say its name?",
+    answer: "silence",
+    difficulty: "medium",
+    points: 20,
+    hint: "Absence of sound",
+    timeLimit: 20
+  },
+  {
+    id: 169,
+    question: "What kind of coat is best to put on wet?",
+    answer: "coat of paint",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about home improvement",
+    timeLimit: 20
+  },
+  {
+    id: 170,
+    question: "What type of cheese is made backward?",
+    answer: "edam",
+    difficulty: "medium",
+    points: 20,
+    hint: "Read it in reverse",
+    timeLimit: 20
+  },
+  {
+    id: 171,
+    question: "What is the one thing everyone can agree is between heaven and earth?",
+    answer: "and",
+    difficulty: "medium",
+    points: 20,
+    hint: "Look at the phrase 'heaven and earth'",
+    timeLimit: 20
+  },
+  {
+    id: 172,
+    question: "I can make sounds, but I cannot be played. What am I?",
+    answer: "voice",
+    difficulty: "medium",
+    points: 20,
+    hint: "You use it to speak",
+    timeLimit: 20
+  },
+  {
+    id: 173,
+    question: "I am higher without a head. What am I?",
+    answer: "pillow",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for sleeping",
+    timeLimit: 20
+  },
+  {
+    id: 174,
+    question: "I have 13 hearts but no lungs or stomach. What am I?",
+    answer: "deck of cards",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for games",
+    timeLimit: 20
+  },
+  {
+    id: 175,
+    question: "I am easy to lift but hard to throw. What am I?",
+    answer: "feather",
+    difficulty: "medium",
+    points: 20,
+    hint: "Very lightweight",
+    timeLimit: 20
+  },
+  {
+    id: 176,
+    question: "When is 'L' greater than 'XL'?",
+    answer: "roman numerals",
+    difficulty: "medium",
+    points: 20,
+    hint: "Think about number systems",
+    timeLimit: 20
+  },
+  {
+    id: 177,
+    question: "The more you take, the more you leave behind. What are they?",
+    answer: "footsteps",
+    difficulty: "medium",
+    points: 20,
+    hint: "Made when walking",
+    timeLimit: 20
+  },
+  {
+    id: 178,
+    question: "I have cities, but not houses. I have mountains, but no trees. I have coasts, but no sand. What am I?",
+    answer: "map",
+    difficulty: "medium",
+    points: 20,
+    hint: "Used for navigation",
+    timeLimit: 20
+  },
+  {
+    id: 179,
+    question: "Without a bridle or a saddle, across a thing, I ride a-straddle. And those I ride, by help of me, though almost blind, are made to see. What am I?",
+    answer: "eyeglasses",
+    difficulty: "medium",
+    points: 20,
+    hint: "Vision aid",
+    timeLimit: 20
+  },
+  {
+    id: 180,
+    question: "If you have me, you want to share me. If you share me, you don't have me. What am I?",
+    answer: "secret",
+    difficulty: "medium",
+    points: 20,
+    hint: "Something confidential",
+    timeLimit: 20
   }
 ];
 
@@ -1276,6 +1456,141 @@ const hardRiddles = [
     difficulty: "hard",
     points: 30,
     hint: "Related to time passing",
+    timeLimit: 15
+  },
+  {
+    id: 226,
+    question: "Forward, I am heavy; backward, I am not. What am I?",
+    answer: "ton",
+    difficulty: "hard",
+    points: 30,
+    hint: "Think about spelling",
+    timeLimit: 15
+  },
+  {
+    id: 227,
+    question: "What can you hold in your right hand, but never in your left hand?",
+    answer: "your left hand",
+    difficulty: "hard",
+    points: 30,
+    hint: "It's a part of your body",
+    timeLimit: 15
+  },
+  {
+    id: 228,
+    question: "What has hands but cannot clap?",
+    answer: "clock",
+    difficulty: "hard",
+    points: 30,
+    hint: "It tells time",
+    timeLimit: 15
+  },
+  {
+    id: 229,
+    question: "What has four fingers and a thumb, but is not living?",
+    answer: "glove",
+    difficulty: "hard",
+    points: 30,
+    hint: "You wear it in winter",
+    timeLimit: 15
+  },
+  {
+    id: 230,
+    question: "What starts with T, ends with T, and has T in it?",
+    answer: "teapot",
+    difficulty: "hard",
+    points: 30,
+    hint: "Used for brewing",
+    timeLimit: 15
+  },
+  {
+    id: 231,
+    question: "What kind of ship has two mates but no captain?",
+    answer: "relationship",
+    difficulty: "hard",
+    points: 30,
+    hint: "Not a physical vessel",
+    timeLimit: 15
+  },
+  {
+    id: 232,
+    question: "What loses its head in the morning but gets it back at night?",
+    answer: "pillow",
+    difficulty: "hard",
+    points: 30,
+    hint: "Used for sleeping",
+    timeLimit: 15
+  },
+  {
+    id: 233,
+    question: "Poor people have it. Rich people need it. If you eat it you die. What is it?",
+    answer: "nothing",
+    difficulty: "hard",
+    points: 30,
+    hint: "It's not a physical object",
+    timeLimit: 15
+  },
+  {
+    id: 234,
+    question: "What is the longest word in the dictionary?",
+    answer: "smiles",
+    difficulty: "hard",
+    points: 30,
+    hint: "There's a mile between the first and last letter",
+    timeLimit: 15
+  },
+  {
+    id: 235,
+    question: "Throw away the outside and cook the inside, then eat the outside and throw away the inside. What is it?",
+    answer: "corn on the cob",
+    difficulty: "hard",
+    points: 30,
+    hint: "A popular summer food",
+    timeLimit: 15
+  },
+  {
+    id: 236,
+    question: "What is at the end of a rainbow?",
+    answer: "w",
+    difficulty: "hard",
+    points: 30,
+    hint: "Think about the spelling of 'rainbow'",
+    timeLimit: 15
+  },
+  {
+    id: 237,
+    question: "What kind of tree can you carry in your hand?",
+    answer: "palm",
+    difficulty: "hard",
+    points: 30,
+    hint: "It's also part of your hand",
+    timeLimit: 15
+  },
+  {
+    id: 238,
+    question: "They come out at night without being called, and are lost in the day without being stolen. What are they?",
+    answer: "stars",
+    difficulty: "hard",
+    points: 30,
+    hint: "Look up at the night sky",
+    timeLimit: 15
+  },
+  {
+    id: 239,
+    question: "You'll find me in Mercury, Earth, Mars, Jupiter, Saturn and Uranus. But never Neptune, or Venus. What am I?",
+    answer: "r",
+    difficulty: "hard",
+    points: 30,
+    hint: "It's a letter",
+    timeLimit: 15
+  },
+  {
+    id: 240,
+    question: "How many months have 28 days?",
+    answer: "all",
+    difficulty: "hard",
+    points: 30,
+    hint: "Think about calendar months",
     timeLimit: 15
   }
 ];

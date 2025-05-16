@@ -274,10 +274,10 @@ export default function EasyMode() {
       // Start fetching riddles
       fetchRiddles();
       
-      // Set a timeout to end the loading state after 5 seconds
+      // Set a timeout to end the loading state after a short delay
       setTimeout(() => {
         setIsResetting(false);
-      }, 500);
+      }, 1500); // Reduced from 5 seconds to 1.5 seconds for faster response
     }
   };
 
