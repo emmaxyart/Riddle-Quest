@@ -216,14 +216,28 @@ export default function MediumMode() {
   }, [user?.hintsRemaining, handleHint, riddles, currentRiddleIndex]);
 
   const handleResetGame = () => {
-    setIsResetting(true);
-    resetGame();
-    setCurrentRiddleIndex(0);
-    setAnswer('');
-    setFeedback({ message: '', type: null });
-    fetchRiddles().finally(() => {
-      setIsResetting(false);
-    });
+    // Show confirmation dialog
+    if (confirm("Are you sure you want to reset the game? All game progress will be lost.")) {
+      setIsResetting(true);
+      resetGame();
+      setCurrentRiddleIndex(0);
+      setAnswer('');
+      setFeedback({ message: '', type: null });
+      setGameStats({
+        hintsUsed: 0,
+        correctAnswers: 0,
+        timeElapsed: 0,
+        startTime: Date.now()
+      });
+      
+      // Start fetching riddles
+      fetchRiddles();
+      
+      // Set a timeout to end the loading state after 5 seconds
+      setTimeout(() => {
+        setIsResetting(false);
+      }, 500);
+    }
   };
 
   const calculateAchievements = (): string[] => {

@@ -16,10 +16,18 @@ export default function GameComplete({ stats, onPlayAgain }: GameCompleteProps) 
   const [isResetting, setIsResetting] = useState(false);
 
   const handlePlayAgain = () => {
-    setIsResetting(true);
-    onPlayAgain();
-    // Reset state after a short delay to show loading state
-    setTimeout(() => setIsResetting(false), 500);
+    // Show confirmation dialog with updated text
+    if (confirm("Do you wish to play again?")) {
+      setIsResetting(true);
+      
+      // Call the onPlayAgain callback passed from the parent component
+      onPlayAgain();
+      
+      // Set a timeout to end the loading state after a short delay
+      setTimeout(() => {
+        setIsResetting(false);
+      }, 5000); // Reduced from 12 seconds to 5 seconds
+    }
   };
 
   // Determine color theme based on difficulty
@@ -145,5 +153,10 @@ export default function GameComplete({ stats, onPlayAgain }: GameCompleteProps) 
     </motion.div>
   );
 }
+
+
+
+
+
 
 

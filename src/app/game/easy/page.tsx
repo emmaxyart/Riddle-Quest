@@ -256,15 +256,29 @@ export default function EasyMode() {
   }, [user?.hintsRemaining, handleHint, riddles, currentRiddleIndex]);
 
   const handleResetGame = () => {
-    setIsResetting(true);
-    resetGame();
-    setCurrentRiddleIndex(0);
-    setAnswer('');
-    setFeedback({ message: '', type: null });
-    setUsedHintsThisGame(false); // Reset hints used flag
-    fetchRiddles().finally(() => {
-      setIsResetting(false);
-    });
+    // Show confirmation dialog
+    if (confirm("Are you sure you want to reset the game? All game progress will be lost.")) {
+      setIsResetting(true);
+      resetGame();
+      setCurrentRiddleIndex(0);
+      setAnswer('');
+      setFeedback({ message: '', type: null });
+      setUsedHintsThisGame(false); // Reset hints used flag
+      setGameStats({
+        hintsUsed: 0,
+        correctAnswers: 0,
+        timeElapsed: 0,
+        startTime: Date.now()
+      });
+      
+      // Start fetching riddles
+      fetchRiddles();
+      
+      // Set a timeout to end the loading state after 5 seconds
+      setTimeout(() => {
+        setIsResetting(false);
+      }, 500);
+    }
   };
 
   const calculateProgress = () => {
@@ -453,7 +467,7 @@ export default function EasyMode() {
                 disabled={isResetting}
                 className="px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
               >
-                {isResetting ? "Resetting..." : "Reset Game"}
+                {isResetting ? "Resetting Game..." : "Reset Game"}
               </button>
               
               <button
