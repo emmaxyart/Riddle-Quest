@@ -146,7 +146,7 @@ export default function EasyMode() {
       // Call completeGame with the updated stats
       completeGame(gameStats.hintsUsed > 0);
     }
-  }, [currentRiddleIndex, riddles.length, gameState.score, completeGame, gameStats.startTime]);
+  }, [currentRiddleIndex, riddles.length, gameStats.startTime, gameStats.hintsUsed, gameState.score, completeGame]);
 
   const handleTimeUp = useCallback(() => {
     setFeedback({
@@ -256,29 +256,27 @@ export default function EasyMode() {
   }, [user?.hintsRemaining, handleHint, riddles, currentRiddleIndex]);
 
   const handleResetGame = () => {
-    // Show confirmation dialog
-    if (confirm("Are you sure you want to reset the game? All game progress will be lost.")) {
-      setIsResetting(true);
-      resetGame();
-      setCurrentRiddleIndex(0);
-      setAnswer('');
-      setFeedback({ message: '', type: null });
-      setUsedHintsThisGame(false); // Reset hints used flag
-      setGameStats({
-        hintsUsed: 0,
-        correctAnswers: 0,
-        timeElapsed: 0,
-        startTime: Date.now()
-      });
-      
-      // Start fetching riddles
-      fetchRiddles();
-      
-      // Set a timeout to end the loading state after a short delay
-      setTimeout(() => {
-        setIsResetting(false);
-      }, 1500); // Reduced from 5 seconds to 1.5 seconds for faster response
-    }
+    // Remove confirmation dialog
+    setIsResetting(true);
+    resetGame();
+    setCurrentRiddleIndex(0);
+    setAnswer('');
+    setFeedback({ message: '', type: null });
+    setUsedHintsThisGame(false); // Reset hints used flag
+    setGameStats({
+      hintsUsed: 0,
+      correctAnswers: 0,
+      timeElapsed: 0,
+      startTime: Date.now()
+    });
+    
+    // Start fetching riddles
+    fetchRiddles();
+    
+    // Set a timeout to end the loading state after a short delay
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 1500); // Reduced from 5 seconds to 1.5 seconds for faster response
   };
 
   const calculateProgress = () => {
@@ -347,6 +345,7 @@ export default function EasyMode() {
     // Calculate final game stats
     const timeElapsed = Math.floor((Date.now() - gameStats.startTime) / 1000);
     const correctAnswers = gameStats.correctAnswers;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const averageTime = correctAnswers > 0 ? (timeElapsed / correctAnswers).toFixed(1) : "N/A";
     
     return (

@@ -17,10 +17,11 @@ type DifficultyButton = {
 };
 
 export default function Dashboard() {
-  const { user, toggleMusic, isMusicPlaying } = useGame(); // Removed logout
+  const { user, toggleMusic, isMusicPlaying, resetHighScore } = useGame(); // Removed logout
   const router = useRouter();
   const [showInstructions, setShowInstructions] = useState(false);
-
+  const [isResettingScore, setIsResettingScore] = useState(false);
+  
   useEffect(() => {
     if (!user) {
       router.push('/');
@@ -49,6 +50,18 @@ export default function Dashboard() {
       label: 'Hard Mode' 
     },
   ];
+
+  const handleResetHighScore = () => {
+    if (confirm("Are you sure you want to reset your high score?")) {
+      setIsResettingScore(true);
+      resetHighScore();
+      
+      // Set a timeout to reset the button state
+      setTimeout(() => {
+        setIsResettingScore(false);
+      }, 1000);
+    }
+  };
 
   return (
     <ErrorBoundary>
@@ -152,6 +165,19 @@ export default function Dashboard() {
                     <span className="text-xl">💡</span>
                     <p>Hints Remaining: {user.hintsRemaining}</p>
                   </div>
+                  
+                  {/* Add reset high score button */}
+                  <button
+                    onClick={handleResetHighScore}
+                    disabled={isResettingScore || user.highScore === 0}
+                    className={`mt-4 px-4 py-2 rounded-lg ${
+                      user.highScore === 0
+                        ? 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
+                        : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                    } transition-colors`}
+                  >
+                    {isResettingScore ? "Resetting..." : "Reset High Score"}
+                  </button>
                 </div>
               </div>
             </div>

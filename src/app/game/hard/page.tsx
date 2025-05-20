@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/context/GameContext';
 import { Riddle } from '@/types';
@@ -38,13 +38,24 @@ export default function HardMode() {
 
   const TOTAL_RIDDLES = 20; // Changed from 10 to 20 riddles for hard mode
 
+  // Add a ref to track if the game has been completed
+  const gameCompletedRef = useRef(false);
+
   // Add useEffect to handle game completion
   useEffect(() => {
-    if (currentRiddleIndex === riddles.length && riddles.length > 0) {
-      // Call completeGame once when the game is finished
-      completeGame(gameStats.hintsUsed > 0);
+    // Only call completeGame when the game is actually finished and not already completed
+    if (
+      currentRiddleIndex === riddles.length && 
+      riddles.length > 0 && 
+      !gameState.isComplete && 
+      !gameCompletedRef.current
+    ) {
+      // Mark as completed to prevent multiple calls
+      gameCompletedRef.current = true;
+      const hasUsedHints = gameStats.hintsUsed > 0;
+      completeGame(hasUsedHints);
     }
-  }, [currentRiddleIndex, riddles.length, gameStats.hintsUsed, completeGame]);
+  }, [currentRiddleIndex, riddles.length, gameState.isComplete, completeGame, gameStats.hintsUsed]);
 
   const fetchRiddles = async () => {
     try {
@@ -74,28 +85,28 @@ export default function HardMode() {
   };
 
   const handleResetGame = () => {
-    // Show confirmation dialog
-    if (confirm("Are you sure you want to reset the game? All game progress will be lost.")) {
-      setIsResetting(true);
-      resetGame();
-      setCurrentRiddleIndex(0);
-      setAnswer('');
-      setFeedback({ message: '', type: null });
-      setGameStats({
-        hintsUsed: 0,
-        correctAnswers: 0,
-        timeElapsed: 0,
-        startTime: Date.now()
-      });
-      
-      // Start fetching riddles
-      fetchRiddles();
-      
-      // Set a timeout to end the loading state after 5 seconds
-      setTimeout(() => {
-        setIsResetting(false);
-      }, 500);
-    }
+    // Reset the completion ref
+    gameCompletedRef.current = false;
+    
+    setIsResetting(true);
+    resetGame();
+    setCurrentRiddleIndex(0);
+    setAnswer('');
+    setFeedback({ message: '', type: null });
+    setGameStats({
+      hintsUsed: 0,
+      correctAnswers: 0,
+      timeElapsed: 0,
+      startTime: Date.now()
+    });
+    
+    // Start fetching riddles
+    fetchRiddles();
+    
+    // Set a timeout to end the loading state after a short delay
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 500);
   };
 
   const handleQuitGame = () => {
@@ -111,8 +122,9 @@ export default function HardMode() {
       setAnswer('');
       setFeedback({ message: '', type: null });
       setTimeRemaining(15); // Reset timer for next riddle
-    } else {
-      // Game is over - set index to riddles.length to trigger GameComplete
+    } else if (currentRiddleIndex === riddles.length - 1) {
+      // Only update to riddles.length if we're at the last riddle
+      // This prevents multiple updates if already at the end
       setCurrentRiddleIndex(riddles.length);
       
       // Calculate final game stats
@@ -179,6 +191,7 @@ export default function HardMode() {
       return;
     }
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     if (useHint()) {
       // Track hint usage
       setGameStats(prev => ({
@@ -203,52 +216,69 @@ export default function HardMode() {
   }, [user?.hintsRemaining, useHint, riddles, currentRiddleIndex]);
 
   useEffect(() => {
-    // Reset game when component mounts
-    resetGame();
-    fetchRiddles();
+    // Only reset game and fetch riddles on initial mount
+    const initializeGame = async () => {
+      resetGame();
+      await fetchRiddles();
+    };
+    
+    initializeGame();
+    // Empty dependency array means this only runs once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (riddles.length > 0 && currentRiddleIndex < riddles.length) {
+    // Only set up timer when we have riddles and aren't at the end
+    if (
+      riddles.length > 0 && 
+      currentRiddleIndex < riddles.length && 
+      !isLoading && 
+      !isResetting
+    ) {
+      // Set start time only once when the riddle changes
       setStartTime(Date.now());
       
+      // Set up interval for countdown
       const timer = setInterval(() => {
-        setTimeRemaining(prev => {
+        setTimeRemaining((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
-            moveToNextRiddle();
+            // Use a timeout to avoid state updates during render
+            setTimeout(() => moveToNextRiddle(), 0);
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
       
+      // Clean up interval on unmount or when dependencies change
       return () => clearInterval(timer);
     }
-  }, [riddles, currentRiddleIndex, moveToNextRiddle]);
+  }, [riddles.length, currentRiddleIndex, isLoading, isResetting, moveToNextRiddle]);
 
-  const calculateAchievements = () => {
-    const achievements = [];
+  // Memoize the calculateAchievements function to prevent recalculations on every render
+  const calculateAchievements = useCallback(() => {
+    const achievements: string[] = [];
     
-    // Perfect score
+    // Add achievements based on game performance
     if (gameStats.correctAnswers === TOTAL_RIDDLES) {
-      achievements.push('Perfect Score');
+      achievements.push("Perfect Score! 🏆");
     }
     
-    // No hints used
     if (gameStats.hintsUsed === 0) {
-      achievements.push('No Hints Used');
+      achievements.push("No Hints Used! 🧠");
     }
     
-    // Fast solver
-    const averageTime = gameStats.timeElapsed / gameStats.correctAnswers;
-    if (averageTime < 5) {
-      achievements.push('Speed Demon');
+    if (gameState.score > 150) {
+      achievements.push("High Scorer! 🌟");
+    }
+    
+    if (gameStats.timeElapsed < TOTAL_RIDDLES * 10) {
+      achievements.push("Speed Demon! ⚡");
     }
     
     return achievements;
-  };
+  }, [gameStats.correctAnswers, gameStats.hintsUsed, gameStats.timeElapsed, gameState.score, TOTAL_RIDDLES]);
 
   if (isLoading) {
     return <Loading />;
@@ -281,6 +311,7 @@ export default function HardMode() {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const currentRiddle = riddles[currentRiddleIndex];
 
   return (

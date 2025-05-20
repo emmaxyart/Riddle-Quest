@@ -23,15 +23,17 @@ interface GameContextType {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 const DEFAULT_GAME_STATE: GameState = {
-  currentRiddle: 0,
-  score: 0,
-  isPlaying: false,
-  multiplier: 0,
-  gameMode: 'easy' // Adding default game mode
-  ,
-  timeElapsed: 0,
-  correctAnswers: 0,
-  hintsUsed: 0
+    currentRiddle: 0,
+    score: 0,
+    isPlaying: false,
+    multiplier: 0,
+    gameMode: 'easy' // Adding default game mode
+    ,
+
+    timeElapsed: 0,
+    correctAnswers: 0,
+    hintsUsed: 0,
+    isComplete: undefined
 };
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
@@ -265,7 +267,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     // Update game state with statistics - fix the error by using a direct setState call
     setGameState({
       ...gameState,
-      hintsUsed: gameState.hintsUsed + (usedHints ? 1 : 0)
+      hintsUsed: gameState.hintsUsed + (usedHints ? 1 : 0),
+      isComplete: true,
     });
     
     const updatedUser = {

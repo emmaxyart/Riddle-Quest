@@ -24,6 +24,8 @@ export interface User {
 }
 
 export interface GameState {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isComplete: any;
   timeElapsed: number;
   correctAnswers: number;
   hintsUsed: number;

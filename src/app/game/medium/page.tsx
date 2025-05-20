@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/context/GameContext';
 import { Riddle } from '@/types';
@@ -9,7 +9,6 @@ import GameComplete from '@/components/GameComplete';
 import { generateHint } from '@/utils/hints';
 import { playSound } from '@/utils/sounds';
 import Loading from '@/components/Loading';
-import ShareButton from '@/components/ShareButton';
 import OfflineRedirect from '@/components/OfflineRedirect';
 
 export default function MediumMode() {
@@ -57,6 +56,9 @@ export default function MediumMode() {
     startTime: Date.now()
   });
 
+  // Add this near the top of your component with other state declarations
+  const gameCompletedRef = useRef(false);
+
   const fetchRiddles = async () => {
     try {
       setIsLoading(true);
@@ -77,10 +79,12 @@ export default function MediumMode() {
     }
   };
 
+  // Ensure initial data loading only happens once
   useEffect(() => {
     // Set game mode to medium when component mounts
     resetGame(); 
     fetchRiddles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const moveToNextRiddle = useCallback(() => {
@@ -88,8 +92,8 @@ export default function MediumMode() {
       setCurrentRiddleIndex(prev => prev + 1);
       setAnswer('');
       setFeedback({ message: '', type: null });
-    } else {
-      // Game is over
+    } else if (currentRiddleIndex === riddles.length - 1) {
+      // Only update to riddles.length if we're at the last riddle
       setCurrentRiddleIndex(riddles.length);
       
       // Calculate final game stats
@@ -104,7 +108,7 @@ export default function MediumMode() {
         type: 'info'
       });
     }
-  }, [currentRiddleIndex, riddles.length, gameState.score, gameStats.startTime, gameStats.hintsUsed]);
+  }, [currentRiddleIndex, riddles.length, gameState.score, gameStats.startTime]);
 
   const handleTimeUp = useCallback(() => {
     setFeedback({
@@ -114,7 +118,9 @@ export default function MediumMode() {
     
     console.log('Time up for current riddle');
     // Reduced from 2000ms to 1500ms (1.5 seconds)
-    setTimeout(moveToNextRiddle, 1500);
+    setTimeout(() => {
+      moveToNextRiddle();
+    }, 1500);
   }, [moveToNextRiddle]);
 
   useEffect(() => {
@@ -124,9 +130,13 @@ export default function MediumMode() {
     }
   }, [currentRiddleIndex, riddles]);
 
+  // Fix the timer effect to prevent potential loops
   useEffect(() => {
-    if (isLoading || currentRiddleIndex >= riddles.length) return;
+    if (isLoading || currentRiddleIndex >= riddles.length || isResetting) return;
 
+    // Set start time when riddle changes
+    setStartTime(Date.now());
+    
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
@@ -139,7 +149,7 @@ export default function MediumMode() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isLoading, currentRiddleIndex, riddles.length, handleTimeUp]);
+  }, [isLoading, currentRiddleIndex, riddles.length, handleTimeUp, isResetting]);
 
   const handleSubmitAnswer = () => {
     if (!answer.trim()) {
@@ -216,28 +226,28 @@ export default function MediumMode() {
   }, [user?.hintsRemaining, handleHint, riddles, currentRiddleIndex]);
 
   const handleResetGame = () => {
-    // Show confirmation dialog
-    if (confirm("Are you sure you want to reset the game? All game progress will be lost.")) {
-      setIsResetting(true);
-      resetGame();
-      setCurrentRiddleIndex(0);
-      setAnswer('');
-      setFeedback({ message: '', type: null });
-      setGameStats({
-        hintsUsed: 0,
-        correctAnswers: 0,
-        timeElapsed: 0,
-        startTime: Date.now()
-      });
-      
-      // Start fetching riddles
-      fetchRiddles();
-      
-      // Set a timeout to end the loading state after 5 seconds
-      setTimeout(() => {
-        setIsResetting(false);
-      }, 500);
-    }
+    // Reset the completion ref
+    gameCompletedRef.current = false;
+    
+    setIsResetting(true);
+    resetGame();
+    setCurrentRiddleIndex(0);
+    setAnswer('');
+    setFeedback({ message: '', type: null });
+    setGameStats({
+      hintsUsed: 0,
+      correctAnswers: 0,
+      timeElapsed: 0,
+      startTime: Date.now()
+    });
+    
+    // Start fetching riddles
+    fetchRiddles();
+    
+    // Set a timeout to end the loading state after a short delay
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 500);
   };
 
   const calculateAchievements = (): string[] => {
@@ -269,13 +279,21 @@ export default function MediumMode() {
     return achievements;
   };
 
-  // Add this useEffect at the top level of the component, outside any conditional blocks
+  // Fix the useEffect that's likely causing the infinite loop
   useEffect(() => {
-    if (currentRiddleIndex === riddles.length && riddles.length > 0) {
-      // Call completeGame once when the game is finished
-      completeGame(gameStats.hintsUsed > 0);
+    // Only call completeGame when the game is actually finished and not already completed
+    if (
+      currentRiddleIndex === riddles.length && 
+      riddles.length > 0 && 
+      !gameState.isComplete && 
+      !gameCompletedRef.current
+    ) {
+      // Mark as completed to prevent multiple calls
+      gameCompletedRef.current = true;
+      const hasUsedHints = gameStats.hintsUsed > 0;
+      completeGame(hasUsedHints);
     }
-  }, [currentRiddleIndex, riddles.length, gameStats.hintsUsed, completeGame]);
+  }, [currentRiddleIndex, riddles.length, gameState.isComplete, completeGame, gameStats.hintsUsed]);
 
   // Game is complete
   if (currentRiddleIndex >= riddles.length && riddles.length > 0) {
