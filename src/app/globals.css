@@ -138,123 +138,26 @@ textarea::placeholder {
     background-color: rgba(31, 41, 55, 0.8) !important;
   }
 
-  /* Fix game question display areas on iOS */
-  .bg-foreground\/20,
-  [class*="bg-foreground/20"] {
+  /* Fix ONLY game question display containers on iOS - very specific targeting */
+  /* Target only the question container divs in game modes */
+  div.p-4.rounded-xl.bg-foreground\/20.backdrop-blur-sm,
+  div[class*="p-4"][class*="rounded-xl"][class*="bg-foreground/20"][class*="backdrop-blur-sm"] {
     background-color: rgba(31, 41, 55, 0.9) !important;
-    color: #ededed !important;
   }
 
-  /* Fix game input areas on iOS */
-  .bg-foreground\/10,
-  [class*="bg-foreground/10"] {
-    background-color: rgba(31, 41, 55, 0.7) !important;
-    color: #ededed !important;
-  }
-
-  /* Fix text color classes on iOS */
-  .text-foreground\/90,
-  [class*="text-foreground/90"] {
+  /* Fix text inside question containers only */
+  div.p-4.rounded-xl.bg-foreground\/20.backdrop-blur-sm p,
+  div[class*="p-4"][class*="rounded-xl"][class*="bg-foreground/20"][class*="backdrop-blur-sm"] p,
+  div.p-4.rounded-xl.bg-foreground\/20.backdrop-blur-sm h2,
+  div[class*="p-4"][class*="rounded-xl"][class*="bg-foreground/20"][class*="backdrop-blur-sm"] h2 {
     color: #ededed !important;
     -webkit-text-fill-color: #ededed !important;
   }
 
-  .text-foreground\/70,
-  [class*="text-foreground/70"] {
-    color: rgba(237, 237, 237, 0.8) !important;
-    -webkit-text-fill-color: rgba(237, 237, 237, 0.8) !important;
-  }
-
-  .text-foreground\/60,
-  [class*="text-foreground/60"] {
-    color: rgba(237, 237, 237, 0.7) !important;
-    -webkit-text-fill-color: rgba(237, 237, 237, 0.7) !important;
-  }
-
-  .text-foreground\/50,
-  [class*="text-foreground/50"] {
-    color: rgba(237, 237, 237, 0.6) !important;
-    -webkit-text-fill-color: rgba(237, 237, 237, 0.6) !important;
-  }
-
-  .text-foreground\/40,
-  [class*="text-foreground/40"] {
-    color: rgba(237, 237, 237, 0.5) !important;
-    -webkit-text-fill-color: rgba(237, 237, 237, 0.5) !important;
-  }
-
-  /* Ensure all text elements are visible on iOS */
-  p, h1, h2, h3, h4, h5, h6, span, div {
-    -webkit-text-fill-color: inherit !important;
-    text-shadow: none !important;
-  }
-
-  /* Fix backdrop blur elements on iOS */
-  .backdrop-blur-sm,
-  .backdrop-blur-md {
-    background-color: rgba(31, 41, 55, 0.8) !important;
-  }
-
-  /* Fix game feedback messages on iOS */
-  .bg-green-500\/20 {
-    background-color: rgba(34, 197, 94, 0.3) !important;
-  }
-
-  .bg-red-500\/20 {
-    background-color: rgba(239, 68, 68, 0.3) !important;
-  }
-
-  .bg-blue-500\/20 {
-    background-color: rgba(59, 130, 246, 0.3) !important;
-  }
-
-  .bg-yellow-500\/20 {
-    background-color: rgba(234, 179, 8, 0.3) !important;
-  }
-
-  /* Ensure colored text is visible on iOS */
-  .text-green-400 {
-    color: #4ade80 !important;
-    -webkit-text-fill-color: #4ade80 !important;
-  }
-
-  .text-red-400 {
-    color: #f87171 !important;
-    -webkit-text-fill-color: #f87171 !important;
-  }
-
-  .text-blue-400 {
-    color: #60a5fa !important;
-    -webkit-text-fill-color: #60a5fa !important;
-  }
-
-  .text-yellow-400 {
-    color: #facc15 !important;
-    -webkit-text-fill-color: #facc15 !important;
-  }
-
-  /* Fix progress bar backgrounds on iOS */
-  .bg-gradient-to-r {
-    background: linear-gradient(to right, var(--tw-gradient-stops)) !important;
-  }
-
-  /* Global text visibility fix for iOS */
-  * {
-    -webkit-font-smoothing: antialiased !important;
-    -moz-osx-font-smoothing: grayscale !important;
-  }
-
-  /* Ensure all interactive elements are visible on iOS */
-  button, a, input, textarea, select {
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
-    -webkit-touch-callout: none !important;
-    -webkit-user-select: none !important;
-    user-select: none !important;
-  }
-
-  /* Allow text selection in input fields */
-  input, textarea {
-    -webkit-user-select: text !important;
-    user-select: text !important;
+  /* Specifically target question text with text-foreground/90 class inside question containers */
+  div.p-4.rounded-xl.bg-foreground\/20.backdrop-blur-sm .text-foreground\/90,
+  div[class*="p-4"][class*="rounded-xl"][class*="bg-foreground/20"][class*="backdrop-blur-sm"] [class*="text-foreground/90"] {
+    color: #ededed !important;
+    -webkit-text-fill-color: #ededed !important;
   }
 }
