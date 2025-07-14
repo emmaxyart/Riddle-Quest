@@ -71,20 +71,24 @@ textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  
+
   /* Ensure consistent background and text colors */
-  background-color: rgba(237, 237, 237, 0.1) !important;
-  color: var(--foreground) !important;
-  
+  background-color: rgba(31, 41, 55, 0.8) !important;
+  color: #ededed !important;
+
   /* Fix iOS zoom on focus */
   font-size: 16px;
-  
+
   /* Prevent iOS from changing colors on focus/autocomplete */
-  -webkit-text-fill-color: var(--foreground) !important;
-  
+  -webkit-text-fill-color: #ededed !important;
+
   /* Fix autocomplete background */
-  -webkit-box-shadow: 0 0 0 1000px rgba(237, 237, 237, 0.1) inset !important;
-  box-shadow: 0 0 0 1000px rgba(237, 237, 237, 0.1) inset !important;
+  -webkit-box-shadow: 0 0 0 1000px rgba(31, 41, 55, 0.8) inset !important;
+  box-shadow: 0 0 0 1000px rgba(31, 41, 55, 0.8) inset !important;
+
+  /* Additional iOS fixes */
+  -webkit-tap-highlight-color: transparent;
+  text-shadow: none;
 }
 
 /* Specifically target autofill states */
@@ -92,18 +96,19 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px rgba(237, 237, 237, 0.1) inset !important;
-  -webkit-text-fill-color: var(--foreground) !important;
-  color: var(--foreground) !important;
-  background-color: rgba(237, 237, 237, 0.1) !important;
+  -webkit-box-shadow: 0 0 0 1000px rgba(31, 41, 55, 0.8) inset !important;
+  -webkit-text-fill-color: #ededed !important;
+  color: #ededed !important;
+  background-color: rgba(31, 41, 55, 0.8) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Fix placeholder text color on iOS */
 input::placeholder,
 textarea::placeholder {
-  color: rgba(237, 237, 237, 0.5) !important;
+  color: rgba(237, 237, 237, 0.6) !important;
   opacity: 1 !important;
+  -webkit-text-fill-color: rgba(237, 237, 237, 0.6) !important;
 }
 
 /* iOS specific fixes */
@@ -111,8 +116,25 @@ textarea::placeholder {
   input[type="text"],
   input[type="password"],
   input[type="email"] {
-    background-color: rgba(237, 237, 237, 0.1) !important;
-    color: var(--foreground) !important;
-    -webkit-text-fill-color: var(--foreground) !important;
+    background-color: rgba(31, 41, 55, 0.8) !important;
+    color: #ededed !important;
+    -webkit-text-fill-color: #ededed !important;
+    /* Force text visibility on iOS */
+    text-shadow: none !important;
+    /* Prevent iOS from overriding colors */
+    -webkit-tap-highlight-color: transparent !important;
+    /* Ensure consistent font size to prevent zoom */
+    font-size: 16px !important;
+  }
+
+  /* Additional iOS autofill fixes */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px rgba(31, 41, 55, 0.8) inset !important;
+    -webkit-text-fill-color: #ededed !important;
+    color: #ededed !important;
+    background-color: rgba(31, 41, 55, 0.8) !important;
   }
 }

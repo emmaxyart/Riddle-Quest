@@ -38,11 +38,22 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Enter your username"
-          className="w-full px-4 py-3 rounded-lg bg-foreground/20 border border-foreground/30 focus:border-purple-500 transition-colors backdrop-blur-sm placeholder-foreground/50 text-foreground"
+          className="w-full px-4 py-3 rounded-lg border border-foreground/30 focus:border-purple-500 transition-colors backdrop-blur-sm placeholder-foreground/50 text-foreground"
           style={{
             WebkitAppearance: 'none',
-            WebkitTextFillColor: 'var(--foreground)',
-            backgroundColor: 'rgba(237, 237, 237, 0.1)'
+            MozAppearance: 'none',
+            appearance: 'none',
+            backgroundColor: 'rgba(31, 41, 55, 0.8)',
+            color: '#ededed',
+            WebkitTextFillColor: '#ededed',
+            fontSize: '16px', // Prevents zoom on iOS
+            // Override any autofill styling
+            WebkitBoxShadow: '0 0 0 1000px rgba(31, 41, 55, 0.8) inset',
+            boxShadow: '0 0 0 1000px rgba(31, 41, 55, 0.8) inset',
+            // Ensure text is always visible
+            textShadow: 'none',
+            // iOS specific fixes
+            WebkitTapHighlightColor: 'transparent'
           }}
           required
         />
