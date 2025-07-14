@@ -38,7 +38,12 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Enter your username"
-          className="w-full px-4 py-3 rounded-lg bg-foreground/20 border border-foreground/30 focus:border-purple-500 transition-colors backdrop-blur-sm placeholder-foreground/50"
+          className="w-full px-4 py-3 rounded-lg bg-foreground/20 border border-foreground/30 focus:border-purple-500 transition-colors backdrop-blur-sm placeholder-foreground/50 text-foreground"
+          style={{
+            WebkitAppearance: 'none',
+            WebkitTextFillColor: 'var(--foreground)',
+            backgroundColor: 'rgba(237, 237, 237, 0.1)'
+          }}
           required
         />
         {error && (
